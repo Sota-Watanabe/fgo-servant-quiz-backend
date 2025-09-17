@@ -1,24 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { ServantDetailResponse } from 'src/dto/servant-detail.dto';
-import {
-  SkillQuizGetResponseDto,
-  ServantInfoDto,
-  SkillInfoDto,
-  TreasureDeviceInfoDto,
-} from 'src/dto/skill-quiz.dto';
+import { SkillQuizGetResponseDto } from 'src/dto/skill-quiz.dto';
 import { ServantDto } from 'src/dto/servant.dto';
-import { pickDeep } from 'src/utils/pickDeep';
 import * as fs from 'fs';
 import * as path from 'path';
 import axios from 'axios';
 
-interface SkillData {
+type SkillData = {
   id: number;
   name: string;
   ruby: string;
   detail: string;
   detailShort: string;
-}
+};
 
 @Injectable()
 export class QuizService {
@@ -50,19 +44,22 @@ export class QuizService {
       'utf8',
     );
 
-    const a = pickDeep(detailRes, [
-      'mstSvt.name',
-      'mstSvt.ruby',
-      'mstSkill[].mstSkill.name',
-      'mstSkill[].mstSkill.ruby',
-      'mstSkill[].mstSkillDetail[].detail',
-      'mstSkill[].mstSvtSkill[].num',
-      'mstSkill[].mstSvtSkill[].priority',
-      'mstTreasureDevice[].mstTreasureDevice.name',
-      'mstTreasureDevice[].mstTreasureDevice.ruby',
-      'mstTreasureDevice[].mstSvtTreasureDevice[].cardId',
-    ]);
+    // const pickedData = pickDeep(detailRes, [
+    //   'mstSvt.name',
+    //   'mstSvt.ruby',
+    //   'mstSkill[].mstSkill.name',
+    //   'mstSkill[].mstSkill.ruby',
+    //   'mstSkill[].mstSkillDetail[].detail',
+    //   'mstSkill[].mstSvtSkill[].num',
+    //   'mstSkill[].mstSvtSkill[].priority',
+    //   'mstTreasureDevice[].mstTreasureDevice.name',
+    //   'mstTreasureDevice[].mstTreasureDevice.ruby',
+    //   'mstTreasureDevice[].mstSvtTreasureDevice[].cardId',
+    // ] as const);
 
-    return new SkillQuizGetResponseDto();
+    // // pickDeepの結果をログ出力してデータ構造を確認
+    // console.log('Picked data:', JSON.stringify(pickedData, null, 2));
+
+    return new SkillQuizGetResponseDto(detailRes);
   }
 }

@@ -1,14 +1,14 @@
 // 追加型定義
-export interface MstCommonRelease {
+export type MstCommonRelease = {
   id: number;
   priority: number;
   condGroup: number;
   condType: number;
   condId: number;
   condNum: number;
-}
+};
 
-export interface MstFunc {
+export type MstFunc = {
   vals: number[];
   expandedVals: BuffEntityNoReverse[];
   tvals: number[];
@@ -24,9 +24,9 @@ export interface MstFunc {
   applyTarget: number;
   popupIconId: number;
   popupText: string;
-}
+};
 
-export interface MstFuncGroup {
+export type MstFuncGroup = {
   funcId: number;
   eventId: number;
   baseFuncId: number;
@@ -35,13 +35,13 @@ export interface MstFuncGroup {
   iconId: number;
   priority: number;
   isDispValue: boolean;
-}
+};
 
-export interface BuffEntityNoReverse {
+export type BuffEntityNoReverse = {
   mstBuff: MstBuff;
-}
+};
 
-export interface MstBuff {
+export type MstBuff = {
   vals: number[];
   tvals: number[];
   ckSelfIndv: number[];
@@ -54,15 +54,15 @@ export interface MstBuff {
   detail: string;
   iconId: number;
   maxRate: number;
-}
+};
 
-export interface FunctionEntityNoReverse {
+export type FunctionEntityNoReverse = {
   mstFunc: MstFunc;
   mstFuncGroup: MstFuncGroup[];
-}
+};
 
 // Python raw.pyの全フィールドをTypeScript型で網羅
-export interface MstSkill {
+export type MstSkill = {
   effectList: number[];
   actIndividuality: number[];
   script: Record<string, any>;
@@ -73,15 +73,15 @@ export interface MstSkill {
   maxLv: number;
   iconId: number;
   motion: number;
-}
+};
 
-export interface MstSkillDetail {
+export type MstSkillDetail = {
   id: number;
   detail: string;
   detailShort: string;
-}
+};
 
-export interface MstSvtSkill {
+export type MstSvtSkill = {
   script?: Record<string, any>;
   strengthStatus: number;
   svtId: number;
@@ -94,9 +94,9 @@ export interface MstSvtSkill {
   condLimitCount: number;
   eventId: number;
   flag: number;
-}
+};
 
-export interface MstSvtSkillRelease {
+export type MstSvtSkillRelease = {
   svtId: number;
   num: number;
   priority: number;
@@ -105,9 +105,9 @@ export interface MstSvtSkillRelease {
   condTargetId: number;
   condNum: number;
   condGroup: number;
-}
+};
 
-export interface MstSvtSkillAdd {
+export type MstSvtSkillAdd = {
   svtId: number;
   num: number;
   priority: number;
@@ -116,9 +116,9 @@ export interface MstSvtSkillAdd {
   skillIds: number[];
   titles: string[];
   script: Record<string, any>;
-}
+};
 
-export interface MstSvtPassiveSkill {
+export type MstSvtPassiveSkill = {
   svtId: number;
   num: number;
   priority: number;
@@ -133,9 +133,9 @@ export interface MstSvtPassiveSkill {
   commonReleaseId?: number | null;
   startedAt: number;
   endedAt: number;
-}
+};
 
-export interface MstSkillLv {
+export type MstSkillLv = {
   funcId: number[];
   expandedFuncId?: FunctionEntityNoReverse[];
   svals: string[];
@@ -145,23 +145,23 @@ export interface MstSkillLv {
   chargeTurn: number;
   skillDetailId: number;
   priority: number;
-}
+};
 
-export interface MstSkillAdd {
+export type MstSkillAdd = {
   skillId: number;
   priority: number;
   commonReleaseId: number;
   name: string;
   ruby: string;
-}
+};
 
-export interface MstSkillGroup {
+export type MstSkillGroup = {
   id: number;
   skillId: number;
   lv: number;
-}
+};
 
-export interface MstSkillGroupOverwrite {
+export type MstSkillGroupOverwrite = {
   funcId: number[];
   svals: string[];
   skillGroupId: number;
@@ -171,9 +171,9 @@ export interface MstSkillGroupOverwrite {
   vals: string;
   skillDetailId: number;
   expandedFuncId?: FunctionEntityNoReverse[];
-}
+};
 
-export interface SkillEntityNoReverse {
+export type SkillEntityNoReverse = {
   mstSkill: MstSkill;
   mstSkillDetail: MstSkillDetail[];
   mstSvtSkill: MstSvtSkill[];
@@ -184,9 +184,9 @@ export interface SkillEntityNoReverse {
   mstSkillGroup: MstSkillGroup[];
   mstSkillGroupOverwrite: MstSkillGroupOverwrite[];
   aiIds?: Record<string, number[]>;
-}
+};
 
-export interface MstSvt {
+export type MstSvt = {
   relateQuestIds: number[];
   individuality: number[];
   classPassive: number[];
@@ -224,9 +224,9 @@ export interface MstSvt {
   collectionNo: number;
   materialStoryPriority: number;
   flag: number;
-}
+};
 
-export interface MstSvtIndividuality {
+export type MstSvtIndividuality = {
   individuality: number[];
   svtId: number;
   idx: number;
@@ -237,9 +237,9 @@ export interface MstSvtIndividuality {
   startedAt?: number | null;
   eventId?: number | null;
   endedAt?: number | null;
-}
+};
 
-export interface MstSvtLimitAdd {
+export type MstSvtLimitAdd = {
   individuality: number[];
   script: Record<string, any>;
   svtId: number;
@@ -253,9 +253,9 @@ export interface MstSvtLimitAdd {
   svtVoiceId: number;
   voicePrefix: number;
   attri?: number | null;
-}
+};
 
-export interface MstSvtLimit {
+export type MstSvtLimit = {
   weaponColor: number;
   svtId: number;
   limitCount: number;
@@ -280,9 +280,9 @@ export interface MstSvtLimit {
   deity: number;
   stepProbability: number;
   strParam: string;
-}
+};
 
-export interface MstSvtExtra {
+export type MstSvtExtra = {
   svtId: number;
   mstSvt: MstSvt;
   zeroLimitOverwriteName?: string | null;
@@ -294,9 +294,9 @@ export interface MstSvtExtra {
   costumeLimitSvtIdMap: Record<number, any>;
   limitAdds: MstSvtLimitAdd[];
   limits: MstSvtLimit[];
-}
+};
 
-export interface MstSvtCard {
+export type MstSvtCard = {
   normalDamage: number[];
   singleDamage: number[];
   trinityDamage: number[];
@@ -307,21 +307,21 @@ export interface MstSvtCard {
   cardId: number;
   motion: number;
   attackType: number;
-}
+};
 
-export interface MstSvtCardAdd {
+export type MstSvtCardAdd = {
   svtId: number;
   cardId: number;
   script: string;
-}
+};
 
-export interface BasicMstSvtLimit {
+export type BasicMstSvtLimit = {
   rarity: number;
   hpMax: number;
   atkMax: number;
-}
+};
 
-export interface MstSvtComment {
+export type MstSvtComment = {
   condValues?: number[] | null;
   script?: Record<string, any> | null;
   svtId: number;
@@ -331,11 +331,11 @@ export interface MstSvtComment {
   comment: string;
   condType: number;
   condValue2: number;
-}
+};
 
-export interface ServantDetailResponse {
+export type ServantDetailResponse = {
   mstSvt: MstSvt;
-  mstSkill: MstSkill[];
+  mstSkill: SkillEntityNoReverse[];
   mstSvtLimit?: MstSvtLimit[];
   mstSvtExtra?: MstSvtExtra;
   mstSvtCard?: MstSvtCard[];
@@ -349,4 +349,4 @@ export interface ServantDetailResponse {
   mstSkillGroup?: MstSkillGroup[];
   mstSkillGroupOverwrite?: MstSkillGroupOverwrite[];
   // ...他にもAPIレスポンスに合わせて追加
-}
+};
