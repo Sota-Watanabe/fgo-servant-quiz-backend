@@ -1,5 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { ServantDetailResponse } from 'src/dto/servant-detail.dto';
+import {
+  SkillQuizGetResponseDto,
+  ServantInfoDto,
+  SkillInfoDto,
+  TreasureDeviceInfoDto,
+} from 'src/dto/skill-quiz.dto';
 import { ServantDto } from 'src/dto/servant.dto';
 import { pickDeep } from 'src/utils/pickDeep';
 import * as fs from 'fs';
@@ -19,7 +25,7 @@ export class QuizService {
   private skillData: SkillData[] = [];
   constructor() {}
 
-  async getSkillQuiz() {
+  async getSkillQuiz(): Promise<SkillQuizGetResponseDto> {
     const region = 'JP';
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const servantData: ServantDto[] = JSON.parse(
@@ -37,16 +43,26 @@ export class QuizService {
     const detailUrl = `https://api.atlasacademy.io/raw/${region}/servant/${servantId}?lore=true`;
     const detailRes = (await axios.get<ServantDetailResponse>(detailUrl)).data;
 
+    // detailResをファイルに書き出す
+    fs.writeFileSync(
+      path.join(process.cwd(), 'data/detailResDemo.json'),
+      JSON.stringify(detailRes, null, 2),
+      'utf8',
+    );
+
     const a = pickDeep(detailRes, [
       'mstSvt.name',
       'mstSvt.ruby',
       'mstSkill[].mstSkill.name',
       'mstSkill[].mstSkill.ruby',
       'mstSkill[].mstSkillDetail[].detail',
+      'mstSkill[].mstSvtSkill[].num',
+      'mstSkill[].mstSvtSkill[].priority',
       'mstTreasureDevice[].mstTreasureDevice.name',
       'mstTreasureDevice[].mstTreasureDevice.ruby',
       'mstTreasureDevice[].mstSvtTreasureDevice[].cardId',
     ]);
-    return JSON.stringify(a);
+
+    return new SkillQuizGetResponseDto();
   }
 }
