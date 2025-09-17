@@ -1,22 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { ServantDetailResponse } from 'src/dto/servant-detail.dto';
-import { SkillQuizGetResponseDto } from 'src/dto/skill-quiz.dto';
 import { ServantDto } from 'src/dto/servant.dto';
 import * as fs from 'fs';
 import * as path from 'path';
 import axios from 'axios';
-
-type SkillData = {
-  id: number;
-  name: string;
-  ruby: string;
-  detail: string;
-  detailShort: string;
-};
+import { SkillQuizGetResponseDto } from 'src/dto/skill-quiz-get-response.dto';
 
 @Injectable()
 export class QuizService {
-  private skillData: SkillData[] = [];
   constructor() {}
 
   async getSkillQuiz(): Promise<SkillQuizGetResponseDto> {
@@ -60,6 +51,7 @@ export class QuizService {
     // // pickDeepの結果をログ出力してデータ構造を確認
     // console.log('Picked data:', JSON.stringify(pickedData, null, 2));
 
+    // 山の翁、クレオパトラ、エイリークのスキル, penntesireiaが変
     return new SkillQuizGetResponseDto(detailRes);
   }
 }

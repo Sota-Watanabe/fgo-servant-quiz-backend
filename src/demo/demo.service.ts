@@ -4,7 +4,6 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { ServantDetailResponse } from 'src/dto/servant-detail.dto';
 import { ServantDto } from 'src/dto/servant.dto';
-import { pickDeep } from '../utils/pickDeep';
 
 @Injectable()
 export class DemoService {
@@ -33,19 +32,20 @@ export class DemoService {
       'utf8',
     );
 
-    const a = pickDeep(detailRes, [
-      'mstSvt.name',
-      'mstSvt.ruby',
-      'mstSkill[].mstSkill.name',
-      'mstSkill[].mstSkill.ruby',
-      'mstSkill[].mstSkillDetail[].detail',
-      'mstTreasureDevice[].mstTreasureDevice.name',
-      'mstTreasureDevice[].mstTreasureDevice.ruby',
-      'mstTreasureDevice[].mstSvtTreasureDevice[].cardId',
-      'mstSvtComment[].comment',
-    ]);
-    console.log(JSON.stringify(a, null, 2));
-    // const skills = detailRes.mstSvtSkills.map((skill) => skill.);
-    return JSON.stringify(a);
+    // const a = pickDeep(detailRes, [
+    //   'mstSvt.name',
+    //   'mstSvt.ruby',
+    //   'mstSkill[].mstSkill.name',
+    //   'mstSkill[].mstSkill.ruby',
+    //   'mstSkill[].mstSkillDetail[].detail',
+    //   'mstTreasureDevice[].mstTreasureDevice.name',
+    //   'mstTreasureDevice[].mstTreasureDevice.ruby',
+    //   'mstTreasureDevice[].mstSvtTreasureDevice[].cardId',
+    //   'mstSvtComment[].comment',
+    // ]);
+    // console.log(JSON.stringify(a, null, 2));
+    // // const skills = detailRes.mstSvtSkills.map((skill) => skill.);
+    // return JSON.stringify(a);
+    return 'test';
   }
 }

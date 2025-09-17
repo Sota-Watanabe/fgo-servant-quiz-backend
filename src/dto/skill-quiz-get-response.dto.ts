@@ -24,7 +24,11 @@ export class SkillQuizGetResponseDto {
   treasure: TreasureDeviceInfoDto[];
 
   constructor(data: ExtendedServantDetailResponse) {
-    this.servant = new ServantInfoDto(data.mstSvt.name, data.mstSvt.ruby);
+    this.servant = new ServantInfoDto(
+      data.mstSvt.name,
+      data.mstSvt.ruby,
+      data.mstSvt.classId,
+    );
 
     this.skills =
       data.mstSkill?.map(
@@ -53,10 +57,12 @@ export class SkillQuizGetResponseDto {
 export class ServantInfoDto {
   name: string;
   ruby: string;
+  classId: number;
 
-  constructor(name: string, ruby: string) {
+  constructor(name: string, ruby: string, classId: number) {
     this.name = name;
     this.ruby = ruby;
+    this.classId = classId;
   }
 }
 
