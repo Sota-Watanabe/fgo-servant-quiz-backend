@@ -18,7 +18,8 @@ async function bootstrap() {
 
   // Cloud RunのPORT環境変数を使用、デフォルトは3000
   const port = process.env.PORT || 3000;
-  await app.listen(port);
+  // Cloud Run用に0.0.0.0でリッスン
+  await app.listen(port, '0.0.0.0');
   console.log(`Application is running on port ${port}`);
 }
 

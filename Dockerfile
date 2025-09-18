@@ -39,12 +39,12 @@ COPY --from=builder --chown=nestjs:nodejs /app/data ./data
 # Change to non-root user
 USER nestjs
 
-# Expose port
+# Expose default port (Cloud Run will override with PORT env var)
 EXPOSE 3000
 
-# Health check
+# Health check (using PORT env var for dynamic port)
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:3000/ || exit 1
+  CMD curl -f http://localhost:${PORT:-3000}/ || exit 1
 
 # Start the application with dumb-init
 CMD ["dumb-init", "node", "dist/main.js"]
