@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import axios from 'axios';
+// import axios from 'axios';
 import * as fs from 'fs';
 import * as path from 'path';
-import { ServantDetailResponse } from 'src/dto/servant-detail.dto';
+// import { ServantDetailResponse } from 'src/dto/servant-detail-nice.dto';
 import { ServantDto } from 'src/dto/servant.dto';
 
 @Injectable()
@@ -22,15 +22,15 @@ export class DemoService {
     const servantId = randomServant.id;
     console.log('選ばれたサーヴァントID:', servantId);
     // 詳細取得
-    const detailUrl = `https://api.atlasacademy.io/raw/${region}/servant/${servantId}?lore=true`;
-    const detailRes = (await axios.get<ServantDetailResponse>(detailUrl)).data;
+    // const detailUrl = `https://api.atlasacademy.io/raw/${region}/servant/${servantId}?lore=true`;
+    // const detailRes = (await axios.get<ServantDetailResponse>(detailUrl)).data;
 
     // detailResをファイルに書き出す
-    fs.writeFileSync(
-      path.join(process.cwd(), 'data/detailResDemo.json'),
-      JSON.stringify(detailRes, null, 2),
-      'utf8',
-    );
+    // fs.writeFileSync(
+    //   path.join(process.cwd(), 'data/detailResDemo.json'),
+    //   JSON.stringify(detailRes, null, 2),
+    //   'utf8',
+    // );
 
     // const a = pickDeep(detailRes, [
     //   'mstSvt.name',

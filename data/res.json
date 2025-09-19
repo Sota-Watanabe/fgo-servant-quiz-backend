@@ -1,0 +1,81 @@
+{
+  "id": 702900,
+  "collectionNo": 178,
+  "name": "織田信長",
+  "originalName": "織田信長",
+  "ruby": "オダノブナガ",
+  "classId": 7,
+  "rarity": 4,
+  "noblePhantasms": [
+    {
+      "id": 702901,
+      "num": 1,
+      "card": "buster",
+      "name": "第六天魔王波旬～夏盛～",
+      "originalName": "第六天魔王波旬～夏盛～",
+      "ruby": "ノブナガ・ＴＨＥ・ロックンロール",
+      "icon": "https://static.atlasacademy.io/JP/Servants/Commands/702900/card_servant_np.png",
+      "rank": "E～EX",
+      "type": "対神宝具",
+      "effectFlags": [
+        "attackEnemyOne"
+      ],
+      "detail": "敵単体に超強力な〔神性〕特攻攻撃<オーバーチャージで特攻威力アップ>",
+      "unmodifiedDetail": "敵単体に超強力な〔神性〕特攻攻撃[{0}]<オーバーチャージで特攻威力アップ>"
+    },
+    {
+      "id": 702902,
+      "num": 1,
+      "card": "buster",
+      "name": "第六天魔王波旬～夏盛～",
+      "originalName": "第六天魔王波旬～夏盛～",
+      "ruby": "ノブナガ・ＴＨＥ・ロックンロール",
+      "icon": "https://static.atlasacademy.io/JP/Servants/Commands/702900/card_servant_np.png",
+      "rank": "E～EX",
+      "type": "対神宝具",
+      "effectFlags": [
+        "attackEnemyOne"
+      ],
+      "detail": "敵単体に超強力な〔神性〕特攻攻撃▲<オーバーチャージで特攻威力アップ> ＋ 自身にフィールドを〔炎上〕特性にする状態を付与(3ターン)▲",
+      "unmodifiedDetail": "敵単体に超強力な〔神性〕特攻攻撃[{0}][g][o]▲[/o][/g]<オーバーチャージで特攻威力アップ> ＋ 自身にフィールドを〔炎上〕特性にする状態を付与(3ターン)[g][o]▲[/o][/g]"
+    }
+  ],
+  "skills": [
+    {
+      "id": 387550,
+      "num": 1,
+      "name": "うつけ殺法 A",
+      "originalName": "うつけ殺法 A",
+      "ruby": "うつけさっぽう",
+      "detail": "自身に回避状態を付与(1ターン)＆Busterカード性能をアップ(3ターン)",
+      "unmodifiedDetail": "自身に回避状態を付与(1ターン)＆Busterカード性能をアップ[{0}](3ターン)",
+      "type": "active",
+      "priority": 1,
+      "icon": "https://static.atlasacademy.io/JP/SkillIcons/skill_00402.png"
+    },
+    {
+      "id": 388450,
+      "num": 2,
+      "name": "敦盛ビート B",
+      "originalName": "敦盛ビート B",
+      "ruby": "あつもりびーと",
+      "detail": "自身に毎ターンスター獲得状態を付与(5ターン) ＋ 味方全体に毎ターンHP回復状態を付与(5ターン)＆毎ターンNP獲得状態を付与(5ターン)",
+      "unmodifiedDetail": "自身に毎ターンスター獲得状態を付与[{0}](5ターン) ＋ 味方全体に毎ターンHP回復状態を付与[{0}](5ターン)＆毎ターンNP獲得状態を付与(5ターン)",
+      "type": "active",
+      "priority": 1,
+      "icon": "https://static.atlasacademy.io/JP/SkillIcons/skill_00605.png"
+    },
+    {
+      "id": 389549,
+      "num": 3,
+      "name": "渚の第六天魔王 A-",
+      "originalName": "渚の第六天魔王 A-",
+      "ruby": "なぎさのだいろくてんまおう",
+      "detail": "自身のスター集中度をアップ(1ターン)＆必中状態を付与(1ターン)＆〔炎上〕しているフィールドで攻撃力がアップ(3ターン)",
+      "unmodifiedDetail": "自身のスター集中度をアップ[{0}](1ターン)＆必中状態を付与(1ターン)＆〔炎上〕しているフィールドで攻撃力がアップ[{0}](3ターン)",
+      "type": "active",
+      "priority": 1,
+      "icon": "https://static.atlasacademy.io/JP/SkillIcons/skill_00311.png"
+    }
+  ]
+}
