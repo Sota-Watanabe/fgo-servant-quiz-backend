@@ -7,11 +7,20 @@ export class ServantDto {
   @ApiProperty({ description: 'コレクション番号', example: 1 })
   collectionNo: number;
 
-  @ApiProperty({ description: 'サーヴァント名', example: 'アルトリア・ペンドラゴン' })
+  @ApiProperty({
+    description: 'サーヴァント名',
+    example: 'アルトリア・ペンドラゴン',
+  })
   name: string;
 
   @ApiProperty({ description: 'オリジナル名', example: 'Artoria Pendragon' })
   originalName: string;
+
+  @ApiProperty({
+    description: 'オリジナル上書き名（英語の別名・通称）',
+    example: 'Demon King Nobunaga',
+  })
+  originalOverwriteName: string;
 
   @ApiProperty({ description: 'タイプ', example: 'normal' })
   type: string; // "normal" | "heroine" | ...
@@ -38,9 +47,9 @@ export class ServantDto {
       type: 'object',
       properties: {
         id: { type: 'number' },
-        name: { type: 'string' }
-      }
-    }
+        name: { type: 'string' },
+      },
+    },
   })
   traits: {
     id: number;
@@ -68,9 +77,9 @@ export class ServantDto {
         id: { type: 'number' },
         costumeCollectionNo: { type: 'number' },
         battleCharaId: { type: 'number' },
-        shortName: { type: 'string' }
-      }
-    }
+        shortName: { type: 'string' },
+      },
+    },
   })
   costume: {
     [battleCharaId: string]: {

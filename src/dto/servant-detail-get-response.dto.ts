@@ -13,7 +13,10 @@ export class NoblePhantasm {
   @ApiProperty({ description: 'カードタイプ', example: 'buster' })
   card: string;
 
-  @ApiProperty({ description: 'ノーブルファンタズム名', example: '約束された勝利の剣' })
+  @ApiProperty({
+    description: 'ノーブルファンタズム名',
+    example: '約束された勝利の剣',
+  })
   name: string;
 
   @ApiProperty({ description: 'オリジナル名', example: 'Excalibur' })
@@ -108,7 +111,10 @@ export class ServantDetailGetResponseDto {
   @ApiProperty({ description: 'コレクション番号', example: 1 })
   collectionNo: number;
 
-  @ApiProperty({ description: 'サーヴァント名', example: 'アルトリア・ペンドラゴン' })
+  @ApiProperty({
+    description: 'サーヴァント名',
+    example: 'アルトリア・ペンドラゴン',
+  })
   name: string;
 
   @ApiProperty({ description: 'オリジナル名', example: 'Artoria Pendragon' })
@@ -123,7 +129,10 @@ export class ServantDetailGetResponseDto {
   @ApiProperty({ description: 'レア度', example: 5 })
   rarity: number;
 
-  @ApiProperty({ description: 'ノーブルファンタズム一覧', type: [NoblePhantasm] })
+  @ApiProperty({
+    description: 'ノーブルファンタズム一覧',
+    type: [NoblePhantasm],
+  })
   noblePhantasms: NoblePhantasm[];
 
   @ApiProperty({ description: 'スキル一覧', type: [Skill] })

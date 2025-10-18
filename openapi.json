@@ -68,6 +68,32 @@
           "quiz"
         ]
       }
+    },
+    "/servants/options": {
+      "get": {
+        "description": "クイズで使用するサーヴァントの選択肢データを取得します。各サーヴァントのID、名前、オリジナル名が含まれます。",
+        "operationId": "ServantsController_getServantOptions",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "サーヴァント選択肢一覧の取得に成功しました",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ServantsOptionsGetResponseDto"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "サーバー内部エラー"
+          }
+        },
+        "summary": "サーヴァント選択肢一覧の取得",
+        "tags": [
+          "servants"
+        ]
+      }
     }
   },
   "info": {
@@ -291,6 +317,46 @@
           "rarity",
           "noblePhantasms",
           "skills"
+        ]
+      },
+      "ServantsOptions": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "description": "サーヴァントID",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "description": "サーヴァント名",
+            "example": "アルトリア・ペンドラゴン"
+          },
+          "originalOverwriteName": {
+            "type": "string",
+            "description": "オリジナル名",
+            "example": "Artoria Pendragon"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "originalOverwriteName"
+        ]
+      },
+      "ServantsOptionsGetResponseDto": {
+        "type": "object",
+        "properties": {
+          "options": {
+            "description": "サーヴァント選択肢の配列",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ServantsOptions"
+            }
+          }
+        },
+        "required": [
+          "options"
         ]
       }
     }
