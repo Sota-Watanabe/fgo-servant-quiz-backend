@@ -23,10 +23,9 @@ export class ServantsOptions {
     this.id = data.id;
     this.name = data.name;
     this.originalOverwriteName =
-      data.name === data.originalName &&
-      data.name === data.originalOverwriteName
-        ? undefined
-        : `(${data.name})(${data.originalName})(${data.originalOverwriteName})`;
+      data.originalOverwriteName && data.name !== data.originalOverwriteName
+        ? data.originalOverwriteName
+        : undefined;
     this.classId = data.classId;
   }
 }

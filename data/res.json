@@ -1,92 +1,64 @@
 {
-  "id": 100300,
-  "collectionNo": 4,
-  "name": "アルトリア・ペンドラゴン〔リリィ〕",
-  "originalName": "アルトリア・ペンドラゴン〔リリィ〕",
-  "ruby": "アルトリア・ペンドラゴン〔リリィ〕",
+  "id": 104300,
+  "collectionNo": 344,
+  "name": "ローラン",
+  "originalName": "ローラン",
+  "ruby": "ローラン",
   "classId": 1,
   "rarity": 4,
   "noblePhantasms": [
     {
-      "id": 100301,
+      "id": 104301,
       "num": 1,
       "card": "2",
-      "name": "勝利すべき黄金の剣",
-      "originalName": "勝利すべき黄金の剣",
-      "ruby": "カリバーン",
-      "icon": "https://static.atlasacademy.io/JP/Servants/Commands/100300/card_servant_np.png",
-      "rank": "B",
+      "name": "不毀の極聖",
+      "originalName": "不毀の極聖",
+      "ruby": "デュランダル",
+      "icon": "https://static.atlasacademy.io/JP/Servants/Commands/104300/card_servant_np.png",
+      "rank": "A+",
       "type": "対人宝具",
       "effectFlags": [
-        "attackEnemyAll"
+        "attackEnemyOne"
       ],
-      "detail": "敵全体に強力な攻撃 ＋ 自身のHPを大回復<オーバーチャージで効果アップ>",
-      "unmodifiedDetail": "敵全体に強力な攻撃[{0}] ＋ 自身のHPを大回復<オーバーチャージで効果アップ>"
-    },
-    {
-      "id": 100302,
-      "num": 1,
-      "card": "2",
-      "name": "勝利すべき黄金の剣",
-      "originalName": "勝利すべき黄金の剣",
-      "ruby": "カリバーン",
-      "icon": "https://static.atlasacademy.io/JP/Servants/Commands/100300/card_servant_np.png",
-      "rank": "B+",
-      "type": "対人宝具",
-      "effectFlags": [
-        "attackEnemyAll"
-      ],
-      "detail": "敵全体に強力な攻撃▲ ＋ 自身のHPを大回復▲<オーバーチャージで効果アップ>",
-      "unmodifiedDetail": "敵全体に強力な攻撃[{0}][g][o]▲[/o][/g] ＋ 自身のHPを大回復[g][o]▲[/o][/g]<オーバーチャージで効果アップ>"
+      "detail": "自身に無敵貫通状態を付与(1ターン)＆攻撃力をアップ(3ターン)<オーバーチャージで効果アップ>＆クリティカル威力をアップ(3ターン)<オーバーチャージで効果アップ> ＋ 敵単体に超強力な攻撃",
+      "unmodifiedDetail": "自身に無敵貫通状態を付与(1ターン)＆攻撃力をアップ(3ターン)<オーバーチャージで効果アップ>＆クリティカル威力をアップ(3ターン)<オーバーチャージで効果アップ> ＋ 敵単体に超強力な攻撃[{0}]"
     }
   ],
   "skills": [
     {
-      "id": 57450,
+      "id": 2058550,
       "num": 1,
-      "name": "直感 B",
-      "originalName": "直感 B",
-      "ruby": "ちょっかん",
-      "detail": "スターを大量獲得",
-      "unmodifiedDetail": "スターを大量獲得[{0}]",
+      "name": "金剛体 A",
+      "originalName": "金剛体 A",
+      "ruby": "こんごうたい",
+      "detail": "自身に無敵状態を付与(1ターン)＆防御力をアップ(1ターン)＆NPを増やす",
+      "unmodifiedDetail": "自身に無敵状態を付与(1ターン)＆防御力をアップ[{0}](1ターン)＆NPを増やす[{0}]",
       "type": "active",
       "priority": 1,
-      "icon": "https://static.atlasacademy.io/JP/SkillIcons/skill_00603.png"
+      "icon": "https://static.atlasacademy.io/JP/SkillIcons/skill_00403.png"
     },
     {
-      "id": 92550,
+      "id": 2059350,
       "num": 2,
-      "name": "魔力放出 A",
-      "originalName": "魔力放出 A",
-      "ruby": "まりょくほうしゅつ",
-      "detail": "自身のBusterカード性能をアップ(1ターン)",
-      "unmodifiedDetail": "自身のBusterカード性能をアップ[{0}](1ターン)",
+      "name": "恋に恋してさめざめと涙 C",
+      "originalName": "恋に恋してさめざめと涙 C",
+      "ruby": "こいにこいしてさめざめとなみだ",
+      "detail": "自身のBusterカード性能をアップ(3ターン)＆弱体状態を解除＆魅了耐性をダウン(3ターン)【デメリット】 ＋ 敵全体の強化状態を解除",
+      "unmodifiedDetail": "自身のBusterカード性能をアップ[{0}](3ターン)＆弱体状態を解除＆魅了耐性をダウン(3ターン)【デメリット】 ＋ 敵全体の強化状態を解除",
       "type": "active",
       "priority": 1,
       "icon": "https://static.atlasacademy.io/JP/SkillIcons/skill_00306.png"
     },
     {
-      "id": 73650,
+      "id": 2060650,
       "num": 3,
-      "name": "花の旅路 EX",
-      "originalName": "花の旅路 EX",
-      "ruby": "はなのたびじ",
-      "detail": "味方全体のNP獲得量をアップ(3ターン)",
-      "unmodifiedDetail": "味方全体のNP獲得量をアップ[{0}](3ターン)",
+      "name": "いと遅き角笛 EX",
+      "originalName": "いと遅き角笛 EX",
+      "ruby": "いとおそきつのぶえ",
+      "detail": "スターを獲得 ＋ 自身のスター集中度をアップ(1ターン)＆NPを少し増やす＆HPを500減らす【デメリット】",
+      "unmodifiedDetail": "スターを獲得[{0}] ＋ 自身のスター集中度をアップ[{0}](1ターン)＆NPを少し増やす＆HPを500減らす【デメリット】",
       "type": "active",
       "priority": 1,
-      "icon": "https://static.atlasacademy.io/JP/SkillIcons/skill_00602.png"
-    },
-    {
-      "id": 909550,
-      "num": 1,
-      "name": "花の降る路 A",
-      "originalName": "花の降る路 A",
-      "ruby": "はなのふるみち",
-      "detail": "スターを大量獲得▲ ＋ 自身のNPを増やす▲＆HP回復量をアップ(3ターン)▲",
-      "unmodifiedDetail": "スターを大量獲得[g][o]▲[/o][/g][{0}] ＋ 自身のNPを増やす[{0}][g][o]▲[/o][/g]＆HP回復量をアップ[{0}](3ターン)[g][o]▲[/o][/g]",
-      "type": "active",
-      "priority": 2,
       "icon": "https://static.atlasacademy.io/JP/SkillIcons/skill_00603.png"
     }
   ]

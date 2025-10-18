@@ -19,8 +19,9 @@ export class ServantDto {
   @ApiProperty({
     description: 'オリジナル上書き名（英語の別名・通称）',
     example: 'Demon King Nobunaga',
+    required: false,
   })
-  originalOverwriteName: string;
+  originalOverwriteName?: string;
 
   @ApiProperty({ description: 'タイプ', example: 'normal' })
   type: string; // "normal" | "heroine" | ...
