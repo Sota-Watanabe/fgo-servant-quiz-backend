@@ -13,7 +13,7 @@ async function bootstrap() {
     .addTag('quiz', 'クイズ関連のエンドポイント')
     .addTag('demo', 'デモ用のエンドポイント')
     .build();
-  
+
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
