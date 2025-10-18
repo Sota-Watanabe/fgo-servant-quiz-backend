@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { ServantDto } from 'src/dto/servant.dto';
+import { ServantDto } from '../dto/servant.dto';
 import * as fs from 'fs';
 import * as path from 'path';
 import axios from 'axios';
-import { ServantDetailGetResponseDto } from 'src/dto/servant-detail-get-response.dto';
-import { ServantDetailNiceResponse } from 'src/dto/servant-detail-nice.dto';
+import { ServantDetailGetResponseDto } from '../dto/servant-detail-get-response.dto';
+import { ServantDetailNiceResponse } from '../dto/servant-detail-nice.dto';
 
 @Injectable()
 export class QuizService {
