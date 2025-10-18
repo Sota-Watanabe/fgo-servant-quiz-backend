@@ -1,65 +1,93 @@
 {
-  "id": 104800,
-  "collectionNo": 301,
-  "name": "カルナ〔サンタ〕",
-  "originalName": "カルナ〔サンタ〕",
-  "ruby": "カルナ〔サンタ〕",
+  "id": 100300,
+  "collectionNo": 4,
+  "name": "アルトリア・ペンドラゴン〔リリィ〕",
+  "originalName": "アルトリア・ペンドラゴン〔リリィ〕",
+  "ruby": "アルトリア・ペンドラゴン〔リリィ〕",
   "classId": 1,
   "rarity": 4,
   "noblePhantasms": [
     {
-      "id": 104801,
+      "id": 100301,
       "num": 1,
-      "card": "3",
-      "name": "聖人連続拳",
-      "originalName": "聖人連続拳",
-      "ruby": "ウィニング・アルカプトラ",
-      "icon": "https://static.atlasacademy.io/JP/Servants/Commands/104800/card_servant_np.png",
-      "rank": "A",
+      "card": "2",
+      "name": "勝利すべき黄金の剣",
+      "originalName": "勝利すべき黄金の剣",
+      "ruby": "カリバーン",
+      "icon": "https://static.atlasacademy.io/JP/Servants/Commands/100300/card_servant_np.png",
+      "rank": "B",
       "type": "対人宝具",
       "effectFlags": [
-        "attackEnemyOne"
+        "attackEnemyAll"
       ],
-      "detail": "自身のQuickカード性能をアップ(1ターン)<オーバーチャージで効果アップ> ＋ 敵単体のガッツ状態を解除＆超強力な攻撃",
-      "unmodifiedDetail": "自身のQuickカード性能をアップ(1ターン)<オーバーチャージで効果アップ> ＋ 敵単体のガッツ状態を解除＆超強力な攻撃[{0}]"
+      "detail": "敵全体に強力な攻撃 ＋ 自身のHPを大回復<オーバーチャージで効果アップ>",
+      "unmodifiedDetail": "敵全体に強力な攻撃[{0}] ＋ 自身のHPを大回復<オーバーチャージで効果アップ>"
+    },
+    {
+      "id": 100302,
+      "num": 1,
+      "card": "2",
+      "name": "勝利すべき黄金の剣",
+      "originalName": "勝利すべき黄金の剣",
+      "ruby": "カリバーン",
+      "icon": "https://static.atlasacademy.io/JP/Servants/Commands/100300/card_servant_np.png",
+      "rank": "B+",
+      "type": "対人宝具",
+      "effectFlags": [
+        "attackEnemyAll"
+      ],
+      "detail": "敵全体に強力な攻撃▲ ＋ 自身のHPを大回復▲<オーバーチャージで効果アップ>",
+      "unmodifiedDetail": "敵全体に強力な攻撃[{0}][g][o]▲[/o][/g] ＋ 自身のHPを大回復[g][o]▲[/o][/g]<オーバーチャージで効果アップ>"
     }
   ],
   "skills": [
     {
-      "id": 827550,
+      "id": 57450,
       "num": 1,
-      "name": "フットサンタ A",
-      "originalName": "フットサンタ A",
-      "ruby": "ふっとさんた",
-      "detail": "自身のQuickカード性能をアップ(3回・3ターン)＆Busterカード性能をアップ(3回・3ターン)＆クリティカル威力をアップ(3ターン)",
-      "unmodifiedDetail": "自身のQuickカード性能をアップ[{0}](3回・3ターン)＆Busterカード性能をアップ[{0}](3回・3ターン)＆クリティカル威力をアップ[{0}](3ターン)",
+      "name": "直感 B",
+      "originalName": "直感 B",
+      "ruby": "ちょっかん",
+      "detail": "スターを大量獲得",
+      "unmodifiedDetail": "スターを大量獲得[{0}]",
       "type": "active",
       "priority": 1,
-      "icon": "https://static.atlasacademy.io/JP/SkillIcons/skill_00316.png"
+      "icon": "https://static.atlasacademy.io/JP/SkillIcons/skill_00603.png"
     },
     {
-      "id": 828550,
+      "id": 92550,
       "num": 2,
-      "name": "閃光の拳 A",
-      "originalName": "閃光の拳 A",
-      "ruby": "せんこうのこぶし",
-      "detail": "自身に回避状態を付与(2回・3ターン)＆スター集中度をアップ(1ターン)＆Quickカードのクリティカル威力をアップ(1ターン)",
-      "unmodifiedDetail": "自身に回避状態を付与(2回・3ターン)＆スター集中度をアップ[{0}](1ターン)＆Quickカードのクリティカル威力をアップ[{0}](1ターン)",
+      "name": "魔力放出 A",
+      "originalName": "魔力放出 A",
+      "ruby": "まりょくほうしゅつ",
+      "detail": "自身のBusterカード性能をアップ(1ターン)",
+      "unmodifiedDetail": "自身のBusterカード性能をアップ[{0}](1ターン)",
       "type": "active",
       "priority": 1,
-      "icon": "https://static.atlasacademy.io/JP/SkillIcons/skill_00402.png"
+      "icon": "https://static.atlasacademy.io/JP/SkillIcons/skill_00306.png"
     },
     {
-      "id": 829650,
+      "id": 73650,
       "num": 3,
-      "name": "施しの英雄（聖夜） EX",
-      "originalName": "施しの英雄（聖夜） EX",
-      "ruby": "ほどこしのえいゆう(せいや)",
-      "detail": "味方単体のNPを増やす＆弱体無効状態を付与(3回・3ターン)",
-      "unmodifiedDetail": "味方単体のNPを増やす[{0}]＆弱体無効状態を付与(3回・3ターン)",
+      "name": "花の旅路 EX",
+      "originalName": "花の旅路 EX",
+      "ruby": "はなのたびじ",
+      "detail": "味方全体のNP獲得量をアップ(3ターン)",
+      "unmodifiedDetail": "味方全体のNP獲得量をアップ[{0}](3ターン)",
       "type": "active",
       "priority": 1,
-      "icon": "https://static.atlasacademy.io/JP/SkillIcons/skill_00601.png"
+      "icon": "https://static.atlasacademy.io/JP/SkillIcons/skill_00602.png"
+    },
+    {
+      "id": 909550,
+      "num": 1,
+      "name": "花の降る路 A",
+      "originalName": "花の降る路 A",
+      "ruby": "はなのふるみち",
+      "detail": "スターを大量獲得▲ ＋ 自身のNPを増やす▲＆HP回復量をアップ(3ターン)▲",
+      "unmodifiedDetail": "スターを大量獲得[g][o]▲[/o][/g][{0}] ＋ 自身のNPを増やす[{0}][g][o]▲[/o][/g]＆HP回復量をアップ[{0}](3ターン)[g][o]▲[/o][/g]",
+      "type": "active",
+      "priority": 2,
+      "icon": "https://static.atlasacademy.io/JP/SkillIcons/skill_00603.png"
     }
   ]
 }

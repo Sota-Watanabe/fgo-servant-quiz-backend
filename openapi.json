@@ -336,12 +336,18 @@
             "type": "string",
             "description": "オリジナル名",
             "example": "Artoria Pendragon"
+          },
+          "classId": {
+            "type": "number",
+            "description": "クラスID",
+            "example": 1
           }
         },
         "required": [
           "id",
           "name",
-          "originalOverwriteName"
+          "originalOverwriteName",
+          "classId"
         ]
       },
       "ServantsOptionsGetResponseDto": {

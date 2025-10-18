@@ -16,6 +16,9 @@ export class ServantsOptions {
   @ApiProperty({ description: 'オリジナル名', example: 'Artoria Pendragon' })
   originalOverwriteName?: string;
 
+  @ApiProperty({ description: 'クラスID', example: 1 })
+  classId: number;
+
   constructor(data: ServantDto) {
     this.id = data.id;
     this.name = data.name;
@@ -24,6 +27,7 @@ export class ServantsOptions {
       data.name === data.originalOverwriteName
         ? undefined
         : `(${data.name})(${data.originalName})(${data.originalOverwriteName})`;
+    this.classId = data.classId;
   }
 }
 

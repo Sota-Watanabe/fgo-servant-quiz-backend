@@ -15,12 +15,12 @@ async function generateOpenApiSpec() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  
+
   // OpenAPI仕様をJSONファイルとして出力
   writeFileSync('./openapi.json', JSON.stringify(document, null, 2));
-  
+
   console.log('OpenAPI specification generated: openapi.json');
-  
+
   await app.close();
 }
 
