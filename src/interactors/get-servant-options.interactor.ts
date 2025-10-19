@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { ServantService } from '@/services/servant.service';
 import { ServantsOptionsGetResponseDto } from '@/dto/servants-options-get-response.dto';
+import { DumpService } from '@/services/dump.service';
 
 @Injectable()
 export class GetServantOptionsInteractor {
-  constructor(private readonly servantService: ServantService) {}
+  constructor(private readonly dumpService: DumpService) {}
 
   async execute(): Promise<ServantsOptionsGetResponseDto> {
-    const servants = await this.servantService.getServantOptions();
+    const servants = await this.dumpService.getDumpServants();
     return new ServantsOptionsGetResponseDto(servants);
   }
 }

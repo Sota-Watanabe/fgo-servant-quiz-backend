@@ -7,8 +7,8 @@ import { ServantsController } from './servants/servants.controller';
 import { ServantsService } from './servants/servants.service';
 
 // New architecture imports
-import { ServantRepository } from '@/repositories/servant.repository';
-import { ServantService } from '@/services/servant.service';
+import { FgoGameApiService } from '@/services/fgo-game-api.service';
+import { DumpService } from '@/services/dump.service';
 import { GetServantOptionsInteractor } from '@/interactors/get-servant-options.interactor';
 import { GetSkillQuizInteractor } from '@/interactors/get-skill-quiz.interactor';
 
@@ -19,10 +19,9 @@ import { GetSkillQuizInteractor } from '@/interactors/get-skill-quiz.interactor'
     AppService,
     QuizService,
     ServantsService,
-    // Repository
-    ServantRepository,
     // Services
-    ServantService,
+    FgoGameApiService,
+    DumpService,
     // Interactors
     GetServantOptionsInteractor,
     GetSkillQuizInteractor,
