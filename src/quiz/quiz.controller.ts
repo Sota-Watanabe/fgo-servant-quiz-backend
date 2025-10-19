@@ -9,14 +9,15 @@ export class QuizController {
   constructor(private readonly quizService: QuizService) {}
 
   @Get('skill')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'スキルクイズの取得',
-    description: 'ランダムなサーヴァントのスキル情報を含むクイズデータを返します'
+    description:
+      'ランダムなサーヴァントのスキル情報を含むクイズデータを返します',
   })
-  @ApiResponse({ 
-    status: 200, 
+  @ApiResponse({
+    status: 200,
     description: 'スキルクイズデータ',
-    type: ServantDetailGetResponseDto
+    type: ServantDetailGetResponseDto,
   })
   getSkillQuiz() {
     return this.quizService.getSkillQuiz();

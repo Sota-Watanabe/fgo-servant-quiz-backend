@@ -29,15 +29,6 @@ export class QuizService {
     const detailRes = (await axios.get<ServantDetailNiceResponse>(detailUrl))
       .data;
 
-    // detailResをファイルに書き出す
-    fs.writeFileSync(
-      path.join(process.cwd(), 'data/detailResDemo.json'),
-      JSON.stringify(detailRes, null, 2),
-      'utf8',
-    );
-
-    // 山の翁、クレオパトラ、エイリークのスキル, penntesireiaが変
-    // return new SkillQuizGetResponseDto(detailRes);
     const res = new ServantDetailGetResponseDto(detailRes);
 
     // resをファイルに書き出す

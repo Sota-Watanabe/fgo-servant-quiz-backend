@@ -11,7 +11,6 @@ async function bootstrap() {
     .setDescription('Fate/Grand Order Servant Quiz APIのドキュメント')
     .setVersion('1.0')
     .addTag('quiz', 'クイズ関連のエンドポイント')
-    .addTag('demo', 'デモ用のエンドポイント')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

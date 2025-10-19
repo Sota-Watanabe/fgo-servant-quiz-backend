@@ -9,7 +9,11 @@ export class AppController {
 
   @Get()
   @ApiOperation({ summary: 'アプリケーションのヘルスチェック' })
-  @ApiResponse({ status: 200, description: 'アプリケーションの状態を返します', type: String })
+  @ApiResponse({
+    status: 200,
+    description: 'アプリケーションの状態を返します',
+    type: String,
+  })
   getHello(): string {
     return this.appService.getHello();
   }

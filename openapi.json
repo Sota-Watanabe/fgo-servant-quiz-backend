@@ -23,29 +23,6 @@
         ]
       }
     },
-    "/demo/quiz": {
-      "get": {
-        "description": "デモ用のクイズデータを返します",
-        "operationId": "DemoController_getQuiz",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "デモクイズデータ",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        },
-        "summary": "デモクイズの取得",
-        "tags": [
-          "demo"
-        ]
-      }
-    },
     "/quiz/skill": {
       "get": {
         "description": "ランダムなサーヴァントのスキル情報を含むクイズデータを返します",
