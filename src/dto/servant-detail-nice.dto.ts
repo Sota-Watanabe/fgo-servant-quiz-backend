@@ -1,4 +1,4 @@
-export type ServantDetailNiceResponse = {
+export type NiceServantDetailResponse = {
   id: number;
   collectionNo: number;
   name: string;
@@ -8,6 +8,7 @@ export type ServantDetailNiceResponse = {
   rarity: number;
   noblePhantasms: NoblePhantasm[];
   skills: Skill[];
+  profile: Profile;
 };
 
 export type NoblePhantasm = {
@@ -72,4 +73,35 @@ export type SkillSvt = {
   eventId: number;
   flag: number;
   releaseConditions: any[];
+};
+
+export type Profile = {
+  cv: string;
+  illustrator: string;
+  stats: ProfileStats;
+  costume: Record<string, any>;
+  comments: ProfileComment[];
+};
+
+export type ProfileStats = {
+  strength: string;
+  endurance: string;
+  agility: string;
+  magic: string;
+  luck: string;
+  np: string;
+  policy: string;
+  personality: string;
+  deity: string;
+};
+
+export type ProfileComment = {
+  id: number;
+  priority: number;
+  condMessage: string;
+  comment: string;
+  condType: string;
+  condValues: number[];
+  condValue2: number;
+  additionalConds: any[];
 };

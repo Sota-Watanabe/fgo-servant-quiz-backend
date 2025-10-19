@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import axios from 'axios';
 import { ServantDetailGetResponseDto } from '../dto/servant-detail-get-response.dto';
-import { ServantDetailNiceResponse } from '../dto/servant-detail-nice.dto';
+import { NiceServantDetailResponse } from '../dto/servant-detail-nice.dto';
 
 @Injectable()
 export class QuizService {
@@ -26,7 +26,7 @@ export class QuizService {
     console.log('選ばれたサーヴァントID:', servantId);
 
     const detailUrl = `https://api.atlasacademy.io/nice/${region}/servant/${servantId}`;
-    const detailRes = (await axios.get<ServantDetailNiceResponse>(detailUrl))
+    const detailRes = (await axios.get<NiceServantDetailResponse>(detailUrl))
       .data;
 
     const res = new ServantDetailGetResponseDto(detailRes);

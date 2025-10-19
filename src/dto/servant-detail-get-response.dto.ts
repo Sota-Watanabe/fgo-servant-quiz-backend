@@ -1,7 +1,7 @@
 // サーヴァント詳細取得レスポンス用のDTO
 
 import { ApiProperty } from '@nestjs/swagger';
-import { ServantDetailNiceResponse } from './servant-detail-nice.dto';
+import { NiceServantDetailResponse } from './servant-detail-nice.dto';
 
 export class NoblePhantasm {
   @ApiProperty({ description: 'ノーブルファンタズムID', example: 101 })
@@ -138,7 +138,7 @@ export class ServantDetailGetResponseDto {
   @ApiProperty({ description: 'スキル一覧', type: [Skill] })
   skills: Skill[];
 
-  constructor(data: ServantDetailNiceResponse) {
+  constructor(data: NiceServantDetailResponse) {
     this.id = data.id;
     this.collectionNo = data.collectionNo;
     this.name = data.name;

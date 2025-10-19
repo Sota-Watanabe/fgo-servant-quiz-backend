@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ServantDetailNiceResponse } from '@/dto/servant-detail-nice.dto';
+import { NiceServantDetailResponse } from '@/dto/servant-detail-nice.dto';
 import { AtlasAcademyGateway } from '../gateways/atlasacademy.gateway';
 
 @Injectable()
@@ -11,7 +11,7 @@ export class FgoGameApiService {
    */
   async getServantDetail(
     servantId: number,
-  ): Promise<ServantDetailNiceResponse> {
+  ): Promise<NiceServantDetailResponse> {
     const result = this.atlasAcademyGateway.getServantDetail(servantId);
 
     return result;

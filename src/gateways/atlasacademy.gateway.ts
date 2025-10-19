@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ServantDetailNiceResponse } from '@/dto/servant-detail-nice.dto';
+import { NiceServantDetailResponse } from '@/dto/servant-detail-nice.dto';
 import axios from 'axios';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -23,13 +23,18 @@ export class AtlasAcademyGateway {
    */
   async getServantDetail(
     servantId: number,
-  ): Promise<ServantDetailNiceResponse> {
+  ): Promise<NiceServantDetailResponse> {
     const detailUrl = `${this.baseUrl}/nice/${this.region}/servant/${servantId}`;
 
-    const response = await axios.get<ServantDetailNiceResponse>(detailUrl);
+    const response = await axios.get<NiceServantDetailResponse>(detailUrl, {
+      params: { lore: true, lang: 'jp' },
+    });
 
     // デバッグ用: レスポンスをファイルに保存
-    this.saveDebugResponse(response.data, `servant-detail-${servantId}.json`);
+    this.saveDebugResponse(
+      response.data,
+      `servant-detail-${response.data.name}.json`,
+    );
 
     return response.data;
   }
