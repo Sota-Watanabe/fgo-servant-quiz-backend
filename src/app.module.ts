@@ -12,6 +12,7 @@ import { DumpService } from '@/services/dump.service';
 import { AtlasAcademyGateway } from '@/gateways/atlasacademy.gateway';
 import { GetServantOptionsInteractor } from '@/interactors/get-servant-options.interactor';
 import { GetQuizSkillInteractor } from '@/interactors/get-quiz-skill.interactor';
+import { GetQuizProfileInteractor } from '@/interactors/get-quiz-profile.interactor';
 
 @Module({
   imports: [],
@@ -27,6 +28,7 @@ import { GetQuizSkillInteractor } from '@/interactors/get-quiz-skill.interactor'
     // Interactors
     GetServantOptionsInteractor,
     GetQuizSkillInteractor,
+    GetQuizProfileInteractor,
   ],
 })
 export class AppModule {}

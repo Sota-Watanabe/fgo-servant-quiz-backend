@@ -59,3 +59,4 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 data/*
 !data/basic_servant.json
 data/res.json
+openapi.json

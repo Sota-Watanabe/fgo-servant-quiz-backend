@@ -101,7 +101,7 @@ export type ProfileComment = {
   condMessage: string;
   comment: string;
   condType: string;
-  condValues: number[];
-  condValue2: number;
-  additionalConds: any[];
+  // condValues: number[];
+  // condValue2: number;
+  // additionalConds: any[];
 };
