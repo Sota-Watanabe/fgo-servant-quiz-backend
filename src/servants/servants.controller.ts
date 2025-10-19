@@ -1,12 +1,14 @@
 import { Controller, Get } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { ServantsService } from './servants.service';
-import { ServantsOptionsGetResponseDto } from '../dto/servants-options-get-response.dto';
+import { GetServantOptionsInteractor } from '@/interactors/get-servant-options.interactor';
+import { ServantsOptionsGetResponseDto } from '@/dto/servants-options-get-response.dto';
 
 @ApiTags('servants')
 @Controller('servants')
 export class ServantsController {
-  constructor(private readonly servantsService: ServantsService) {}
+  constructor(
+    private readonly getServantOptionsInteractor: GetServantOptionsInteractor,
+  ) {}
 
   @Get('options')
   @ApiOperation({
@@ -23,7 +25,7 @@ export class ServantsController {
     status: 500,
     description: 'サーバー内部エラー',
   })
-  getServantOptions(): ServantsOptionsGetResponseDto {
-    return this.servantsService.getServantOptions();
+  async getServantOptions(): Promise<ServantsOptionsGetResponseDto> {
+    return await this.getServantOptionsInteractor.execute();
   }
 }
