@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ServantDetailNiceResponse } from '@/dto/servant-detail-nice.dto';
-import { AtlasAcademyGateway } from './atlasacademy.gateway';
+import { AtlasAcademyGateway } from '../gateways/atlasacademy.gateway';
 
 @Injectable()
 export class FgoGameApiService {

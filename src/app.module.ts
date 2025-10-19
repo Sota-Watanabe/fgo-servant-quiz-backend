@@ -9,7 +9,7 @@ import { ServantsService } from './servants/servants.service';
 // New architecture imports
 import { FgoGameApiService } from '@/services/fgo-game-api.service';
 import { DumpService } from '@/services/dump.service';
-import { AtlasAcademyGateway } from '@/services/atlasacademy.gateway';
+import { AtlasAcademyGateway } from '@/gateways/atlasacademy.gateway';
 import { GetServantOptionsInteractor } from '@/interactors/get-servant-options.interactor';
 import { GetQuizSkillInteractor } from '@/interactors/get-quiz-skill.interactor';
 
