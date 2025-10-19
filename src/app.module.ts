@@ -9,8 +9,9 @@ import { ServantsService } from './servants/servants.service';
 // New architecture imports
 import { FgoGameApiService } from '@/services/fgo-game-api.service';
 import { DumpService } from '@/services/dump.service';
+import { AtlasAcademyGateway } from '@/services/atlasacademy.gateway';
 import { GetServantOptionsInteractor } from '@/interactors/get-servant-options.interactor';
-import { GetSkillQuizInteractor } from '@/interactors/get-skill-quiz.interactor';
+import { GetQuizSkillInteractor } from '@/interactors/get-quiz-skill.interactor';
 
 @Module({
   imports: [],
@@ -22,9 +23,10 @@ import { GetSkillQuizInteractor } from '@/interactors/get-skill-quiz.interactor'
     // Services
     FgoGameApiService,
     DumpService,
+    AtlasAcademyGateway,
     // Interactors
     GetServantOptionsInteractor,
-    GetSkillQuizInteractor,
+    GetQuizSkillInteractor,
   ],
 })
 export class AppModule {}

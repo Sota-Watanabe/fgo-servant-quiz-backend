@@ -4,7 +4,7 @@ import { DumpService } from '@/services/dump.service';
 import { FgoGameApiService } from '@/services/fgo-game-api.service';
 
 @Injectable()
-export class GetSkillQuizInteractor {
+export class GetQuizSkillInteractor {
   constructor(
     private readonly dumpService: DumpService,
     private readonly fgoGameApiService: FgoGameApiService,

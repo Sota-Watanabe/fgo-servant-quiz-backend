@@ -19,21 +19,6 @@ export class AtlasAcademyGateway {
   private readonly region = 'JP';
 
   /**
-   * デバッグ用: レスポンスをファイルに保存
-   */
-  private saveDebugResponse(data: any, filename: string): void {
-    const debugDir = path.join(process.cwd(), 'data');
-    if (!fs.existsSync(debugDir)) {
-      fs.mkdirSync(debugDir, { recursive: true });
-    }
-    fs.writeFileSync(
-      path.join(debugDir, filename),
-      JSON.stringify(data, null, 2),
-      'utf8',
-    );
-  }
-
-  /**
    * サーヴァントの詳細情報を取得
    */
   async getServantDetail(
@@ -47,5 +32,20 @@ export class AtlasAcademyGateway {
     this.saveDebugResponse(response.data, `servant-detail-${servantId}.json`);
 
     return response.data;
+  }
+
+  /**
+   * デバッグ用: レスポンスをファイルに保存
+   */
+  private saveDebugResponse(data: any, filename: string): void {
+    const debugDir = path.join(process.cwd(), 'data');
+    if (!fs.existsSync(debugDir)) {
+      fs.mkdirSync(debugDir, { recursive: true });
+    }
+    fs.writeFileSync(
+      path.join(debugDir, filename),
+      JSON.stringify(data, null, 2),
+      'utf8',
+    );
   }
 }

@@ -1,13 +1,13 @@
 import { Controller, Get } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { GetSkillQuizInteractor } from '@/interactors/get-skill-quiz.interactor';
+import { GetQuizSkillInteractor } from '@/interactors/get-quiz-skill.interactor';
 import { ServantDetailGetResponseDto } from '@/dto/servant-detail-get-response.dto';
 
 @ApiTags('quiz')
 @Controller('quiz')
 export class QuizController {
   constructor(
-    private readonly getSkillQuizInteractor: GetSkillQuizInteractor,
+    private readonly getQuizSkillInteractor: GetQuizSkillInteractor,
   ) {}
 
   @Get('skill')
@@ -22,6 +22,6 @@ export class QuizController {
     type: ServantDetailGetResponseDto,
   })
   async getSkillQuiz(): Promise<ServantDetailGetResponseDto> {
-    return await this.getSkillQuizInteractor.execute();
+    return await this.getQuizSkillInteractor.execute();
   }
 }
