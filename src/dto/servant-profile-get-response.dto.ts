@@ -1,39 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { NiceServantDetailResponse } from './servant-detail-nice.dto';
 
-export class ProfileCommentDto {
-  @ApiProperty({
-    description: 'コメントID',
-    example: 1,
-  })
-  id: number;
-
-  @ApiProperty({
-    description: '優先度',
-    example: 0,
-  })
-  priority: number;
-
-  @ApiProperty({
-    description: '条件メッセージ',
-    example: '',
-  })
-  condMessage: string;
-
-  @ApiProperty({
-    description: 'コメント本文',
-    example:
-      '薩長同盟の立役者であり、亀山社中（のちの海援隊）の結成、大政奉還の成立に尽力するなど明治維新に大きく貢献した志士の一人。',
-  })
-  comment: string;
-
-  @ApiProperty({
-    description: '条件タイプ',
-    example: 'none',
-  })
-  condType: string;
-}
-
 export class ServantProfileGetResponseDto {
   @ApiProperty({
     description: 'サーヴァントID',
@@ -58,6 +25,24 @@ export class ServantProfileGetResponseDto {
     example: '坂本龍馬',
   })
   originalName: string;
+
+  @ApiProperty({
+    description: 'フリガナ',
+    example: 'さかもとりょうま',
+  })
+  ruby: string;
+
+  @ApiProperty({
+    description: 'クラスID',
+    example: 5,
+  })
+  classId: number;
+
+  @ApiProperty({
+    description: 'レアリティ',
+    example: 4,
+  })
+  rarity: number;
 
   @ApiProperty({
     description: '声優',
@@ -98,19 +83,56 @@ export class ServantProfileGetResponseDto {
   };
 
   @ApiProperty({
-    description: 'プロフィールコメント',
-    type: [ProfileCommentDto],
+    description: 'プロフィール基本情報（最初のコメント）',
+    type: () => ProfileCommentDto,
+    nullable: true,
   })
-  comments: ProfileCommentDto[];
+  baseProfile: ProfileCommentDto | null;
 
   constructor(servantDetail: NiceServantDetailResponse) {
     this.id = servantDetail.id;
     this.collectionNo = servantDetail.collectionNo;
     this.name = servantDetail.name;
     this.originalName = servantDetail.originalName;
+    this.ruby = servantDetail.ruby;
+    this.classId = servantDetail.classId;
+    this.rarity = servantDetail.rarity;
     this.cv = servantDetail.profile.cv;
     this.illustrator = servantDetail.profile.illustrator;
     this.stats = servantDetail.profile.stats;
-    this.comments = servantDetail.profile.comments;
+    this.baseProfile = servantDetail.profile.comments[0] ?? null;
   }
+}
+
+export class ProfileCommentDto {
+  @ApiProperty({
+    description: 'コメントID',
+    example: 1,
+  })
+  id: number;
+
+  @ApiProperty({
+    description: '優先度',
+    example: 0,
+  })
+  priority: number;
+
+  @ApiProperty({
+    description: '条件メッセージ',
+    example: '',
+  })
+  condMessage: string;
+
+  @ApiProperty({
+    description: 'コメント本文',
+    example:
+      '薩長同盟の立役者であり、亀山社中（のちの海援隊）の結成、大政奉還の成立に尽力するなど明治維新に大きく貢献した志士の一人。',
+  })
+  comment: string;
+
+  @ApiProperty({
+    description: '条件タイプ',
+    example: 'none',
+  })
+  condType: string;
 }

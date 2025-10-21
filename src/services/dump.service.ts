@@ -16,7 +16,11 @@ export class DumpService {
       ),
     ) as ServantDto[];
 
-    return Promise.resolve(servantData);
+    // タイプは['heroine', 'normal', 'enemyCollectionDetail'];の3種類があるが、通常サーヴァントとヒロインのみ抽出
+    const filteredServants = servantData.filter(
+      (servant) => servant.type === 'normal' || servant.type === 'heroine',
+    );
+    return Promise.resolve(filteredServants);
   }
 
   /**

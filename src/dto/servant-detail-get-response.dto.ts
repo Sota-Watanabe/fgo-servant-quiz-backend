@@ -1,7 +1,59 @@
-// サーヴァント詳細取得レスポンス用のDTO
-
 import { ApiProperty } from '@nestjs/swagger';
 import { NiceServantDetailResponse } from './servant-detail-nice.dto';
+
+export class ServantDetailGetResponseDto {
+  // サーヴァント詳細取得レスポンス用のDTO
+  @ApiProperty({ description: 'サーヴァントID', example: 1 })
+  id: number;
+
+  @ApiProperty({ description: 'コレクション番号', example: 1 })
+  collectionNo: number;
+
+  @ApiProperty({
+    description: 'サーヴァント名',
+    example: 'アルトリア・ペンドラゴン',
+  })
+  name: string;
+
+  @ApiProperty({ description: 'オリジナル名', example: 'Artoria Pendragon' })
+  originalName: string;
+
+  @ApiProperty({ description: 'ルビ' })
+  ruby: string;
+
+  @ApiProperty({ description: 'クラスID', example: 1 })
+  classId: number;
+
+  @ApiProperty({ description: 'レア度', example: 5 })
+  rarity: number;
+
+  @ApiProperty({
+    description: 'ノーブルファンタズム一覧',
+    type: () => NoblePhantasm,
+    isArray: true,
+  })
+  noblePhantasms: NoblePhantasm[];
+
+  @ApiProperty({
+    description: 'スキル一覧',
+    type: () => Skill,
+    isArray: true,
+  })
+  skills: Skill[];
+
+  constructor(data: NiceServantDetailResponse) {
+    this.id = data.id;
+    this.collectionNo = data.collectionNo;
+    this.name = data.name;
+    this.originalName = data.originalName;
+    this.ruby = data.ruby;
+    this.classId = data.classId;
+    this.rarity = data.rarity;
+    this.noblePhantasms =
+      data.noblePhantasms.map((np) => new NoblePhantasm(np)) || [];
+    this.skills = data.skills.map((skill) => new Skill(skill)) || [];
+  }
+}
 
 export class NoblePhantasm {
   @ApiProperty({ description: 'ノーブルファンタズムID', example: 101 })
@@ -101,53 +153,5 @@ export class Skill {
     this.type = data.type;
     this.priority = data.priority || 0;
     this.icon = data.icon;
-  }
-}
-
-export class ServantDetailGetResponseDto {
-  @ApiProperty({ description: 'サーヴァントID', example: 1 })
-  id: number;
-
-  @ApiProperty({ description: 'コレクション番号', example: 1 })
-  collectionNo: number;
-
-  @ApiProperty({
-    description: 'サーヴァント名',
-    example: 'アルトリア・ペンドラゴン',
-  })
-  name: string;
-
-  @ApiProperty({ description: 'オリジナル名', example: 'Artoria Pendragon' })
-  originalName: string;
-
-  @ApiProperty({ description: 'ルビ' })
-  ruby: string;
-
-  @ApiProperty({ description: 'クラスID', example: 1 })
-  classId: number;
-
-  @ApiProperty({ description: 'レア度', example: 5 })
-  rarity: number;
-
-  @ApiProperty({
-    description: 'ノーブルファンタズム一覧',
-    type: [NoblePhantasm],
-  })
-  noblePhantasms: NoblePhantasm[];
-
-  @ApiProperty({ description: 'スキル一覧', type: [Skill] })
-  skills: Skill[];
-
-  constructor(data: NiceServantDetailResponse) {
-    this.id = data.id;
-    this.collectionNo = data.collectionNo;
-    this.name = data.name;
-    this.originalName = data.originalName;
-    this.ruby = data.ruby;
-    this.classId = data.classId;
-    this.rarity = data.rarity;
-    this.noblePhantasms =
-      data.noblePhantasms.map((np) => new NoblePhantasm(np)) || [];
-    this.skills = data.skills.map((skill) => new Skill(skill)) || [];
   }
 }
