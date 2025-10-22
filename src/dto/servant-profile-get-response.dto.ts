@@ -137,6 +137,12 @@ export class ServantProfileGetResponseDto {
   })
   baseProfile: ProfileCommentDto | null;
 
+  @ApiProperty({
+    description: 'サーヴァント画像URL',
+    example: 'https://example.com/images/servants/102600.png',
+  })
+  imageUrl: string;
+
   constructor(servantDetail: NiceServantDetailResponse) {
     this.id = servantDetail.id;
     this.collectionNo = servantDetail.collectionNo;
@@ -149,6 +155,7 @@ export class ServantProfileGetResponseDto {
     this.illustrator = servantDetail.profile.illustrator;
     this.stats = new ServantProfileStatsDto(servantDetail.profile.stats);
     this.baseProfile = servantDetail.profile.comments[0] ?? null;
+    this.imageUrl = servantDetail.extraAssets.charaGraph.ascension['1'];
   }
 }
 

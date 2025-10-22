@@ -6,11 +6,19 @@ export type NiceServantDetailResponse = {
   ruby: string;
   classId: number;
   rarity: number;
+  extraAssets: ExtraAssets;
   noblePhantasms: NoblePhantasm[];
   skills: Skill[];
   profile: Profile;
 };
 
+export type ExtraAssets = {
+  charaGraph: CharaGraph;
+};
+
+export type CharaGraph = {
+  ascension: { '1': string };
+};
 export type NoblePhantasm = {
   id: number;
   num: number;

@@ -3,14 +3,14 @@ import { ServantDto } from '../dto/servant.dto';
 import * as fs from 'fs';
 import * as path from 'path';
 import axios from 'axios';
-import { ServantDetailGetResponseDto } from '../dto/servant-detail-get-response.dto';
+import { ServantSkillGetResponseDto } from '../dto/servant-skill-get-response.dto';
 import { NiceServantDetailResponse } from '../dto/servant-detail-nice.dto';
 
 @Injectable()
 export class QuizService {
   constructor() {}
 
-  async getSkillQuiz(): Promise<ServantDetailGetResponseDto> {
+  async getSkillQuiz(): Promise<ServantSkillGetResponseDto> {
     const region = 'JP';
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const servantData: ServantDto[] = JSON.parse(
@@ -29,7 +29,7 @@ export class QuizService {
     const detailRes = (await axios.get<NiceServantDetailResponse>(detailUrl))
       .data;
 
-    const res = new ServantDetailGetResponseDto(detailRes);
+    const res = new ServantSkillGetResponseDto(detailRes);
 
     // resをファイルに書き出す
     fs.writeFileSync(

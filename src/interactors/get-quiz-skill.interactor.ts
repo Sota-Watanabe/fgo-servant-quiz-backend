@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ServantDetailGetResponseDto } from '@/dto/servant-detail-get-response.dto';
+import { ServantSkillGetResponseDto } from '@/dto/servant-skill-get-response.dto';
 import { DumpService } from '@/services/dump.service';
 import { FgoGameApiService } from '@/services/fgo-game-api.service';
 
@@ -10,7 +10,7 @@ export class GetQuizSkillInteractor {
     private readonly fgoGameApiService: FgoGameApiService,
   ) {}
 
-  async execute(): Promise<ServantDetailGetResponseDto> {
+  async execute(): Promise<ServantSkillGetResponseDto> {
     // ランダムなサーヴァントを選択
     const randomServant = await this.dumpService.getRandomServant();
 
@@ -18,9 +18,8 @@ export class GetQuizSkillInteractor {
     const servantDetail = await this.fgoGameApiService.getServantDetail(
       randomServant.id,
     );
-
-    const response = new ServantDetailGetResponseDto(servantDetail);
-
+    console.log(servantDetail.extraAssets);
+    const response = new ServantSkillGetResponseDto(servantDetail);
     return response;
   }
 }

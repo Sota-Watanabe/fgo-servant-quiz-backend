@@ -2,7 +2,7 @@ import { Controller, Get } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { GetQuizSkillInteractor } from '@/interactors/get-quiz-skill.interactor';
 import { GetQuizProfileInteractor } from '@/interactors/get-quiz-profile.interactor';
-import { ServantDetailGetResponseDto } from '@/dto/servant-detail-get-response.dto';
+import { ServantSkillGetResponseDto } from '@/dto/servant-skill-get-response.dto';
 import { ServantProfileGetResponseDto } from '@/dto/servant-profile-get-response.dto';
 
 @ApiTags('quiz')
@@ -21,9 +21,9 @@ export class QuizController {
   @ApiResponse({
     status: 200,
     description: 'スキルクイズデータ',
-    type: ServantDetailGetResponseDto,
+    type: ServantSkillGetResponseDto,
   })
-  async getSkillQuiz(): Promise<ServantDetailGetResponseDto> {
+  async getSkillQuiz(): Promise<ServantSkillGetResponseDto> {
     return await this.getQuizSkillInteractor.execute();
   }
 

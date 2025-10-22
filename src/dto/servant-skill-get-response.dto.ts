@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { NiceServantDetailResponse } from './servant-detail-nice.dto';
 
-export class ServantDetailGetResponseDto {
+export class ServantSkillGetResponseDto {
   // サーヴァント詳細取得レスポンス用のDTO
   @ApiProperty({ description: 'サーヴァントID', example: 1 })
   id: number;
@@ -28,6 +28,12 @@ export class ServantDetailGetResponseDto {
   rarity: number;
 
   @ApiProperty({
+    description: 'サーヴァント画像URL',
+    example: 'https://example.com/images/servants/102600.png',
+  })
+  imageUrl: string;
+
+  @ApiProperty({
     description: 'ノーブルファンタズム一覧',
     type: () => NoblePhantasm,
     isArray: true,
@@ -52,6 +58,7 @@ export class ServantDetailGetResponseDto {
     this.noblePhantasms =
       data.noblePhantasms.map((np) => new NoblePhantasm(np)) || [];
     this.skills = data.skills.map((skill) => new Skill(skill)) || [];
+    this.imageUrl = data.extraAssets.charaGraph.ascension['1'];
   }
 }
 
