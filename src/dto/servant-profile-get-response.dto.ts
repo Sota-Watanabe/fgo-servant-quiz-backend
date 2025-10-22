@@ -1,6 +1,74 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { NiceServantDetailResponse } from './servant-detail-nice.dto';
 
+class ServantProfileStatsDto {
+  @ApiProperty({
+    description: '筋力',
+    example: 'C',
+  })
+  strength: string;
+
+  @ApiProperty({
+    description: '耐久',
+    example: 'C',
+  })
+  endurance: string;
+
+  @ApiProperty({
+    description: '敏捷',
+    example: 'B',
+  })
+  agility: string;
+
+  @ApiProperty({
+    description: '魔力',
+    example: 'D',
+  })
+  magic: string;
+
+  @ApiProperty({
+    description: '幸運',
+    example: 'A-',
+  })
+  luck: string;
+
+  @ApiProperty({
+    description: '宝具',
+    example: 'EX',
+  })
+  np: string;
+
+  @ApiProperty({
+    description: '属性',
+    example: 'neutral',
+  })
+  policy: string;
+
+  @ApiProperty({
+    description: '性格',
+    example: 'balanced',
+  })
+  personality: string;
+
+  @ApiProperty({
+    description: '神性',
+    example: 'B-',
+  })
+  deity: string;
+
+  constructor(stats: NiceServantDetailResponse['profile']['stats']) {
+    this.strength = stats.strength;
+    this.endurance = stats.endurance;
+    this.agility = stats.agility;
+    this.magic = stats.magic;
+    this.luck = stats.luck;
+    this.np = stats.np;
+    this.policy = stats.policy;
+    this.personality = stats.personality;
+    this.deity = stats.deity;
+  }
+}
+
 export class ServantProfileGetResponseDto {
   @ApiProperty({
     description: 'サーヴァントID',
@@ -58,29 +126,9 @@ export class ServantProfileGetResponseDto {
 
   @ApiProperty({
     description: 'ステータス情報',
-    example: {
-      strength: 'C',
-      endurance: 'C',
-      agility: 'B',
-      magic: 'D',
-      luck: 'A-',
-      np: 'EX',
-      policy: 'neutral',
-      personality: 'balanced',
-      deity: 'B-',
-    },
+    type: () => ServantProfileStatsDto,
   })
-  stats: {
-    strength: string;
-    endurance: string;
-    agility: string;
-    magic: string;
-    luck: string;
-    np: string;
-    policy: string;
-    personality: string;
-    deity: string;
-  };
+  stats: ServantProfileStatsDto;
 
   @ApiProperty({
     description: 'プロフィール基本情報（最初のコメント）',
@@ -99,7 +147,7 @@ export class ServantProfileGetResponseDto {
     this.rarity = servantDetail.rarity;
     this.cv = servantDetail.profile.cv;
     this.illustrator = servantDetail.profile.illustrator;
-    this.stats = servantDetail.profile.stats;
+    this.stats = new ServantProfileStatsDto(servantDetail.profile.stats);
     this.baseProfile = servantDetail.profile.comments[0] ?? null;
   }
 }
