@@ -62,7 +62,7 @@ export class ServantSkillGetResponseDto {
   }
 }
 
-export class NoblePhantasm {
+class NoblePhantasm {
   @ApiProperty({ description: 'ノーブルファンタズムID', example: 101 })
   id: number;
 

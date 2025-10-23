@@ -13,6 +13,7 @@ import { AtlasAcademyGateway } from '@/gateways/atlasacademy.gateway';
 import { GetServantOptionsInteractor } from '@/interactors/get-servant-options.interactor';
 import { GetQuizSkillInteractor } from '@/interactors/get-quiz-skill.interactor';
 import { GetQuizProfileInteractor } from '@/interactors/get-quiz-profile.interactor';
+import { GetQuizNpInteractor } from '@/interactors/get-quiz-np.interactor';
 
 @Module({
   imports: [],
@@ -29,6 +30,7 @@ import { GetQuizProfileInteractor } from '@/interactors/get-quiz-profile.interac
     GetServantOptionsInteractor,
     GetQuizSkillInteractor,
     GetQuizProfileInteractor,
+    GetQuizNpInteractor,
   ],
 })
 export class AppModule {}
