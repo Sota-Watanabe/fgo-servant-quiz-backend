@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      id-token: write   # ← OIDC 認証に必須！
+      id-token: write # ← OIDC 認証に必須！
 
     steps:
       - name: Checkout code
@@ -42,7 +42,10 @@ jobs:
         uses: google-github-actions/auth@v1
         with:
           workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
-          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT_EMAIL }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      - name: Debug GCP account (on GitHub Actions)
+        run: gcloud auth list
 
       - name: Set up gcloud SDK
         uses: google-github-actions/setup-gcloud@v1
@@ -68,7 +71,7 @@ jobs:
             --image ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
             --platform managed \
             --region ${{ env.REGION }} \
-            --service-account ${{ secrets.GCP_SERVICE_ACCOUNT_EMAIL }} \
+            --service-account ${{ secrets.GCP_SERVICE_ACCOUNT }} \
             --allow-unauthenticated \
             --port 3000 \
             --memory 1Gi \
