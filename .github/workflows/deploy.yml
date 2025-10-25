@@ -42,7 +42,11 @@ jobs:
     - name: Authenticate to Google Cloud
       uses: google-github-actions/auth@v1
       with:
-        credentials_json: ${{ secrets.GCP_SA_KEY }}
+        workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+        service_account: ${{ secrets.GCP_SERVICE_ACCOUNT_EMAIL }}
+
+    - name: Set up gcloud SDK
+      uses: google-github-actions/setup-gcloud@v1
 
     - name: Configure Docker to use gcloud as a credential helper
       run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev
@@ -63,6 +67,7 @@ jobs:
           --image ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
           --platform managed \
           --region ${{ env.REGION }} \
+          --service-account ${{ secrets.GCP_SERVICE_ACCOUNT_EMAIL }} \
           --allow-unauthenticated \
           --port 3000 \
           --memory 1Gi \

@@ -7,7 +7,8 @@
 ### 必須シークレット
 - `GCP_PROJECT_ID`: Google Cloud プロジェクトID
 - `GCP_SA_KEY`: サービスアカウントキー（JSON形式）
-
+- `GCP_WORKLOAD_IDENTITY_PROVIDER`: Workload Identity Provider のリソース名（例: `projects/123456789/locations/global/workloadIdentityPools/github-actions/providers/fgo-backend`）
+- `GCP_SERVICE_ACCOUNT_EMAIL`: GitHub Actions から委譲するサービスアカウントのメールアドレス
 ## デプロイ前の準備
 
 ### 1. Google Cloud設定
@@ -39,10 +40,48 @@ gcloud projects add-iam-policy-binding YOUR_PROJECT_ID \
 gcloud projects add-iam-policy-binding YOUR_PROJECT_ID \
     --member="serviceAccount:cloudrun-deploy-sa@YOUR_PROJECT_ID.iam.gserviceaccount.com" \
     --role="roles/iam.serviceAccountUser"
+```
 
-# サービスアカウントキーの作成
-gcloud iam service-accounts keys create ~/cloudrun-deploy-sa-key.json \
-    --iam-account=cloudrun-deploy-sa@YOUR_PROJECT_ID.iam.gserviceaccount.com
+#### Workload Identity Federationの設定
+GitHub ActionsからCloud Runのサービスアカウントに委譲するため、OIDCフェデレーションを構成します。`YOUR_PROJECT_ID` や `REPOSITORY_OWNER/REPOSITORY_NAME` は実際の値に置き換えてください。
+
+```bash
+# Workload Identity Poolの作成
+gcloud iam workload-identity-pools create github-actions \
+    --project=YOUR_PROJECT_ID \
+    --location="global" \
+    --display-name="GitHub Actions Pool"
+
+# GitHub用OIDCプロバイダの作成
+gcloud iam workload-identity-pools providers create-oidc fgo-backend \
+    --project=YOUR_PROJECT_ID \
+    --location="global" \
+    --workload-identity-pool="github-actions" \
+    --display-name="GitHub Actions Provider" \
+    --attribute-mapping="google.subject=assertion.sub,attribute.repository=assertion.repository" \
+    --issuer-uri="https://token.actions.githubusercontent.com"
+
+# GitHubリポジトリに権限を委譲
+POOL_ID="projects/$(gcloud projects describe YOUR_PROJECT_ID --format='value(projectNumber)')/locations/global/workloadIdentityPools/github-actions"
+gcloud iam service-accounts add-iam-policy-binding cloudrun-deploy-sa@YOUR_PROJECT_ID.iam.gserviceaccount.com \
+    --role="roles/iam.workloadIdentityUser" \
+    --member="principalSet://iam.googleapis.com/${POOL_ID}/attribute.repository/REPOSITORY_OWNER/REPOSITORY_NAME"
+
+### 4. Cloud Run 実行サービスアカウントの割り当て
+Cloud Run の実行環境ではサービスアカウントキーの代わりに、Cloud Run サービスに実行サービスアカウントを直接割り当てます。既存のサービスに反映するには以下のコマンドを実行してください。
+
+```bash
+gcloud run services update YOUR_SERVICE_NAME \
+  --region=asia-northeast1 \
+  --service-account=cloudrun-deploy-sa@YOUR_PROJECT_ID.iam.gserviceaccount.com
+```
+
+Cloud Run から Vertex AI（例: 推論エンドポイント）にアクセスする場合は、上記で割り当てたサービスアカウントに `roles/aiplatform.user` など必要なロールを付与します。
+
+```bash
+gcloud projects add-iam-policy-binding YOUR_PROJECT_ID \
+  --member="serviceAccount:cloudrun-deploy-sa@YOUR_PROJECT_ID.iam.gserviceaccount.com" \
+  --role="roles/aiplatform.user"
 ```
 
 ### 2. GitHubリポジトリ設定
@@ -51,7 +90,10 @@ gcloud iam service-accounts keys create ~/cloudrun-deploy-sa-key.json \
 1. GitHubリポジトリの Settings > Secrets and variables > Actions に移動
 2. 以下のシークレットを追加：
    - `GCP_PROJECT_ID`: Google CloudプロジェクトID
-   - `GCP_SA_KEY`: 上記で作成したサービスアカウントキーの内容（JSON全体）
+   - `GCP_WORKLOAD_IDENTITY_PROVIDER`: 上記で作成したプロバイダのリソース名
+     - 例: `projects/123456789/locations/global/workloadIdentityPools/github-actions/providers/fgo-backend`
+   - `GCP_SERVICE_ACCOUNT_EMAIL`: `cloudrun-deploy-sa@YOUR_PROJECT_ID.iam.gserviceaccount.com`
+   - `FRONTEND_URL`: 本番フロントエンドのURL（デプロイ時の環境変数に使用）
 
 ### 3. Cloud Run APIの有効化
 ```bash
@@ -75,6 +117,8 @@ GitHub Actionsワークフローは以下の場合に実行されます：
 7. Dockerイメージのビルド
 8. Artifact Registryへのプッシュ
 9. Cloud Runへのデプロイ
+
+ワークフロー内の `gcloud run deploy` コマンドは `--service-account=${{ secrets.GCP_SERVICE_ACCOUNT_EMAIL }}` を付与し、Cloud Run 実行サービスアカウントを明示的に指定します。
 
 ## 環境変数
 
