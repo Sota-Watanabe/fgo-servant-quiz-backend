@@ -6,7 +6,7 @@ on:
       - main
   workflow_dispatch:
 
-# ✅ OIDCトークン発行に必要。ジョブ外（トップ）に置く
+# ✅ OIDC 認証のために必要（ジョブ外に置く）
 permissions:
   contents: read
   id-token: write
@@ -41,19 +41,17 @@ jobs:
 
       # ------------------------------------
       # gcloud CLI セットアップ
-      # （auth の後に置くこと）
       # ------------------------------------
       - name: Set up gcloud SDK
         uses: google-github-actions/setup-gcloud@v1
 
       # ------------------------------------
-      # 認証確認
-      # gcloud が OIDC 認証ファイルを確実に読むよう明示
+      # 認証確認（gcloudはCLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDEを参照）
       # ------------------------------------
       - name: Debug GCP account
         run: |
           echo "Using creds from: ${{ steps.auth.outputs.credentials_file_path }}"
-          gcloud auth list
+          gcloud projects describe ${{ env.PROJECT_ID }} --format="value(projectId)"
         env:
           CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE: ${{ steps.auth.outputs.credentials_file_path }}
 
@@ -67,7 +65,7 @@ jobs:
           CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE: ${{ steps.auth.outputs.credentials_file_path }}
 
       # ------------------------------------
-      # Docker イメージビルド
+      # Docker ビルド
       # ------------------------------------
       - name: Build Docker image
         run: |
@@ -86,7 +84,7 @@ jobs:
           CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE: ${{ steps.auth.outputs.credentials_file_path }}
 
       # ------------------------------------
-      # Cloud Run へデプロイ
+      # Cloud Run デプロイ（--port 8080 を明示指定 ✅）
       # ------------------------------------
       - name: Deploy to Cloud Run
         run: |
@@ -95,6 +93,7 @@ jobs:
             --platform managed \
             --region ${{ env.REGION }} \
             --service-account ${{ secrets.GCP_SERVICE_ACCOUNT }} \
-            --allow-unauthenticated
+            --allow-unauthenticated \
+            --port 8080
         env:
           CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE: ${{ steps.auth.outputs.credentials_file_path }}
