@@ -1,16 +1,28 @@
-name: Test OIDC
+name: Deploy Backend to Cloud Run
 
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
-  id-token: write
   contents: read
+  id-token: write
+
+env:
+  PROJECT_ID: fgo-servant-quiz
+  REGION: asia-northeast1
+  REPOSITORY: fgo-quiz
+  IMAGE_NAME: backend
+  SERVICE_NAME: fgo-servant-quiz-backend
 
 jobs:
-  test:
+  deploy:
     runs-on: ubuntu-latest
+
     steps:
+      - uses: actions/checkout@v4
+
       - name: Authenticate to Google Cloud
         id: auth
         uses: google-github-actions/auth@v1
@@ -18,9 +30,10 @@ jobs:
           workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
 
-      - name: Show auth status
+      - name: Set up gcloud
+        uses: google-github-actions/setup-gcloud@v1
+
+      - name: Debug GCP account
         run: |
-          echo "==== gcloud auth list ===="
-          gcloud auth list || true
-          echo "==== print access token ===="
-          gcloud auth print-access-token || true
+          echo "Using creds from: ${{ steps.auth.outputs.credentials_file_path }}"
+          gcloud auth list
