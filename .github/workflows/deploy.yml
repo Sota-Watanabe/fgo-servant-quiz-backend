@@ -51,12 +51,13 @@ jobs:
       # CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE により
       # gcloud CLI に認証ファイルを明示的に渡す
       # ------------------------------------
+      # 🔽 これに修正
       - name: Debug GCP account
         run: |
           echo "Using creds from: ${{ steps.auth.outputs.credentials_file_path }}"
-          gcloud auth list
-        env:
-          CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE: ${{ steps.auth.outputs.credentials_file_path }}
+          gcloud auth activate-service-account \
+            --key-file="${{ steps.auth.outputs.credentials_file_path }}"
+          gcloud auth list  
 
       # ------------------------------------
       # Artifact Registry へDocker認証
