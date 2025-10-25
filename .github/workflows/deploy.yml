@@ -6,7 +6,7 @@ on:
       - main
   workflow_dispatch:
 
-# 👇 OIDCトークン発行のため、permissions はジョブ外（トップ）に置くのが確実
+# ✅ OIDCトークン発行に必要。ジョブ外（トップ）に置く
 permissions:
   contents: read
   id-token: write
@@ -40,27 +40,25 @@ jobs:
           service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
 
       # ------------------------------------
-      # gcloud CLI のセットアップ
-      # （auth の後に置くこと！）
+      # gcloud CLI セットアップ
+      # （auth の後に置くこと）
       # ------------------------------------
       - name: Set up gcloud SDK
         uses: google-github-actions/setup-gcloud@v1
 
       # ------------------------------------
-      # 認証確認（デバッグ用）
-      # CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE により
-      # gcloud CLI に認証ファイルを明示的に渡す
+      # 認証確認
+      # gcloud が OIDC 認証ファイルを確実に読むよう明示
       # ------------------------------------
-      # 🔽 これに修正
       - name: Debug GCP account
         run: |
           echo "Using creds from: ${{ steps.auth.outputs.credentials_file_path }}"
-          gcloud auth activate-service-account \
-            --key-file="${{ steps.auth.outputs.credentials_file_path }}"
-          gcloud auth list  
+          gcloud auth list
+        env:
+          CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE: ${{ steps.auth.outputs.credentials_file_path }}
 
       # ------------------------------------
-      # Artifact Registry へDocker認証
+      # Artifact Registry の Docker 認証設定
       # ------------------------------------
       - name: Configure Docker for Artifact Registry
         run: |
@@ -69,7 +67,7 @@ jobs:
           CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE: ${{ steps.auth.outputs.credentials_file_path }}
 
       # ------------------------------------
-      # Dockerビルド
+      # Docker イメージビルド
       # ------------------------------------
       - name: Build Docker image
         run: |
@@ -78,7 +76,7 @@ jobs:
                      ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
 
       # ------------------------------------
-      # Docker Push（Artifact Registry へ）
+      # Artifact Registry へ push
       # ------------------------------------
       - name: Push Docker image
         run: |
