@@ -1,63 +1,26 @@
-name: Deploy Backend to Cloud Run
+name: Test OIDC
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
 
-env:
-  PROJECT_ID: fgo-servant-quiz
-  SERVICE_NAME: fgo-servant-quiz-backend
-  REGION: asia-northeast1
-  REPOSITORY: fgo-quiz
-  IMAGE_NAME: backend
-
 permissions:
+  id-token: write
   contents: read
-  id-token: write   # ← 必須。これがないと認証が通りません！
 
 jobs:
-  deploy:
+  test:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      # ✅ Workload Identity Federation 認証
       - name: Authenticate to Google Cloud
+        id: auth
         uses: google-github-actions/auth@v1
         with:
           workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
 
-      # ✅ 認証確認（削除してOKだが、1回目は残して確認）
-      - name: Debug GCP account
-        run: gcloud auth list
-
-      - name: Set up gcloud SDK
-        uses: google-github-actions/setup-gcloud@v1
-
-      - name: Configure Docker for Artifact Registry
-        run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
-
-      - name: Build Docker image
+      - name: Show auth status
         run: |
-          docker build -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} .
-          docker tag ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
-                     ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
-
-      - name: Push Docker image
-        run: |
-          docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
-          docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
-
-      - name: Deploy to Cloud Run
-        run: |
-          gcloud run deploy ${{ env.SERVICE_NAME }} \
-            --image ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
-            --platform managed \
-            --region ${{ env.REGION }} \
-            --service-account ${{ secrets.GCP_SERVICE_ACCOUNT }} \
-            --allow-unauthenticated
+          echo "==== gcloud auth list ===="
+          gcloud auth list || true
+          echo "==== print access token ===="
+          gcloud auth print-access-token || true
