@@ -143,7 +143,7 @@ export class ServantProfileGetResponseDto {
   })
   imageUrl: string;
 
-  constructor(servantDetail: NiceServantDetailResponse) {
+  constructor(servantDetail: NiceServantDetailResponse, maskedProfile: string) {
     this.id = servantDetail.id;
     this.collectionNo = servantDetail.collectionNo;
     this.name = servantDetail.name;
@@ -154,7 +154,10 @@ export class ServantProfileGetResponseDto {
     this.cv = servantDetail.profile.cv;
     this.illustrator = servantDetail.profile.illustrator;
     this.stats = new ServantProfileStatsDto(servantDetail.profile.stats);
-    this.baseProfile = servantDetail.profile.comments[0] ?? null;
+    this.baseProfile = {
+      ...servantDetail.profile.comments[0],
+      comment: maskedProfile,
+    };
     this.imageUrl = servantDetail.extraAssets.charaGraph.ascension['1'];
   }
 }

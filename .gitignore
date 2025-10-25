@@ -60,3 +60,4 @@ data/*
 !data/basic_servant.json
 data/res.json
 openapi.json
+fgo-servant-quiz-*.json
