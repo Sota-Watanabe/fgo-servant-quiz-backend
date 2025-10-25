@@ -13,12 +13,13 @@ env:
   REPOSITORY: fgo-quiz
   IMAGE_NAME: backend
 
+permissions:
+  contents: read
+  id-token: write   # ← 必須。これがないと認証が通りません！
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write   # ← 必須。これがないと認証が通りません！
 
     steps:
       - name: Checkout code
