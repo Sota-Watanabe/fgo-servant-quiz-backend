@@ -2,9 +2,11 @@ name: Deploy Backend to Cloud Run
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
   workflow_dispatch:
 
+# 👇 OIDCトークン発行のため、permissions はジョブ外（トップ）に置くのが確実
 permissions:
   contents: read
   id-token: write
@@ -21,8 +23,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      # ------------------------------------
+      # ソースコード取得
+      # ------------------------------------
+      - name: Checkout code
+        uses: actions/checkout@v4
 
+      # ------------------------------------
+      # Workload Identity Federation 認証
+      # ------------------------------------
       - name: Authenticate to Google Cloud
         id: auth
         uses: google-github-actions/auth@v1
@@ -30,10 +39,63 @@ jobs:
           workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
           service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
 
-      - name: Set up gcloud
+      # ------------------------------------
+      # gcloud CLI のセットアップ
+      # （auth の後に置くこと！）
+      # ------------------------------------
+      - name: Set up gcloud SDK
         uses: google-github-actions/setup-gcloud@v1
 
+      # ------------------------------------
+      # 認証確認（デバッグ用）
+      # CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE により
+      # gcloud CLI に認証ファイルを明示的に渡す
+      # ------------------------------------
       - name: Debug GCP account
         run: |
           echo "Using creds from: ${{ steps.auth.outputs.credentials_file_path }}"
           gcloud auth list
+        env:
+          CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE: ${{ steps.auth.outputs.credentials_file_path }}
+
+      # ------------------------------------
+      # Artifact Registry へDocker認証
+      # ------------------------------------
+      - name: Configure Docker for Artifact Registry
+        run: |
+          gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
+        env:
+          CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE: ${{ steps.auth.outputs.credentials_file_path }}
+
+      # ------------------------------------
+      # Dockerビルド
+      # ------------------------------------
+      - name: Build Docker image
+        run: |
+          docker build -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} .
+          docker tag ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
+                     ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
+
+      # ------------------------------------
+      # Docker Push（Artifact Registry へ）
+      # ------------------------------------
+      - name: Push Docker image
+        run: |
+          docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+          docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
+        env:
+          CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE: ${{ steps.auth.outputs.credentials_file_path }}
+
+      # ------------------------------------
+      # Cloud Run へデプロイ
+      # ------------------------------------
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy ${{ env.SERVICE_NAME }} \
+            --image ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
+            --platform managed \
+            --region ${{ env.REGION }} \
+            --service-account ${{ secrets.GCP_SERVICE_ACCOUNT }} \
+            --allow-unauthenticated
+        env:
+          CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE: ${{ steps.auth.outputs.credentials_file_path }}
