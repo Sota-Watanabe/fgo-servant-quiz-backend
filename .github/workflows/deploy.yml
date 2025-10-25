@@ -42,7 +42,7 @@ jobs:
         uses: google-github-actions/auth@v1
         with:
           workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
-          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT_EMAIL }}
 
       - name: Set up gcloud SDK
         uses: google-github-actions/setup-gcloud@v1
@@ -68,7 +68,7 @@ jobs:
             --image ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
             --platform managed \
             --region ${{ env.REGION }} \
-            --service-account ${{ secrets.GCP_SERVICE_ACCOUNT }} \
+            --service-account ${{ secrets.GCP_SERVICE_ACCOUNT_EMAIL }} \
             --allow-unauthenticated \
             --port 3000 \
             --memory 1Gi \
