@@ -95,11 +95,30 @@ jobs:
             --region ${{ env.REGION }} \
             --service-account ${{ secrets.GCP_SERVICE_ACCOUNT }} \
             --allow-unauthenticated \
+            --add-cloudsql-instances "${{ secrets.CLOUD_SQL_INSTANCE }}" \
             --port 8080 \
             --set-env-vars "VERTEX_AI_PROJECT_ID=${{ env.PROJECT_ID }}" \
             --set-env-vars "VERTEX_AI_LOCATION=${{ env.REGION }}" \
             --set-env-vars "VERTEX_AI_MODEL=gemini-2.5-flash" \
             --set-env-vars "FRONTEND_URL=${{ secrets.FRONTEND_URL }}" \
-            --set-env-vars "NODE_ENV=production"
+            --set-env-vars "NODE_ENV=production" \
+            --set-env-vars "DB_SOCKET_PATH=/cloudsql/${{ secrets.CLOUD_SQL_INSTANCE }}" \
+            --set-env-vars "DB_HOST=localhost" \
+            --set-env-vars "DB_PORT=3306" \
+            --set-env-vars "DB_USER=${{ secrets.DB_USER }}" \
+            --set-env-vars "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" \
+            --set-env-vars "DB_NAME=${{ secrets.DB_NAME }}"
+        env:
+          CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE: ${{ steps.auth.outputs.credentials_file_path }}
+
+      # ------------------------------------
+      # Cloud Run 環境変数を確認（名前のみ表示）
+      # ------------------------------------
+      - name: Verify Cloud Run environment variables
+        run: |
+          gcloud run services describe ${{ env.SERVICE_NAME }} \
+            --platform managed \
+            --region ${{ env.REGION }} \
+            --format="table(spec.template.spec.containers[0].env[].name)"
         env:
           CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE: ${{ steps.auth.outputs.credentials_file_path }}
