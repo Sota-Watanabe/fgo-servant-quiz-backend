@@ -28,8 +28,9 @@ async function bootstrap() {
     credentials: true,
   });
 
-  // Cloud RunのPORT環境変数を使用、デフォルトは8888
-  const port = process.env.PORT || 8888;
+  // Cloud RunのPORT環境変数を数値として解釈し、無効値はデフォルトの8888を使用
+  const parsedPort = parseInt(process.env.PORT ?? '', 10);
+  const port = Number.isNaN(parsedPort) ? 8888 : parsedPort;
   // Cloud Run用に0.0.0.0でリッスン
   await app.listen(port, '0.0.0.0');
   console.log(`Application is running on port ${port}`);
