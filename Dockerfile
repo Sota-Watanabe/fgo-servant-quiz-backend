@@ -39,5 +39,5 @@ EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD curl -f http://localhost:${PORT:-8080}/ || exit 1
 
-# ✅ Run built app (dist/main.js)
-CMD ["dumb-init", "node", "dist/main.js"]
+# ✅ Run built app (dist/src/main.js)
+CMD ["dumb-init", "node", "dist/src/main.js"]
