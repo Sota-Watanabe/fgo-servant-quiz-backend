@@ -13,6 +13,7 @@ permissions:
 
 env:
   PROJECT_ID: fgo-servant-quiz
+  VERTEX_AI_PROJECT_ID: fgo-servant-quiz
   REGION: asia-northeast1
   REPOSITORY: fgo-quiz
   IMAGE_NAME: backend
