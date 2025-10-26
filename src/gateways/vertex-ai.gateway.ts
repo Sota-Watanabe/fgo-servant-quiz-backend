@@ -5,7 +5,7 @@ import { VertexAI, type GenerateContentResponse } from '@google-cloud/vertexai';
 export class VertexAiGateway {
   private readonly logger = new Logger(VertexAiGateway.name);
   private readonly projectId =
-    process.env.VERTEX_AI_PROJECT_ID ?? process.env.GCLOUD_PROJECT;
+    process.env.VERTEX_AI_PROJECT_ID ?? process.env.PROJECT_ID;
   private readonly location =
     process.env.VERTEX_AI_LOCATION ?? 'asia-northeast1';
   private readonly model = process.env.VERTEX_AI_MODEL ?? 'gemini-2.5-flash';
