@@ -28,6 +28,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
             'DB_CHARSET',
             'utf8mb4_unicode_ci',
           ),
+          extra: {
+            socketPath: process.env.DB_HOST, // For Google Cloud SQL Unix socket
+          },
         };
       },
     }),
