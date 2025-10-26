@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import 'tsconfig-paths/register';
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { existsSync, readFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
