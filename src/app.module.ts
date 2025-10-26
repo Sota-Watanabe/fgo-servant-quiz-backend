@@ -3,7 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { QuizController } from './quiz/quiz.controller';
-import { QuizService } from './quiz/quiz.service';
+
 import { ServantsController } from './servants/servants.controller';
 import { ServantsService } from './servants/servants.service';
 
@@ -16,8 +16,8 @@ import { GetServantOptionsInteractor } from '@/interactors/get-servant-options.i
 import { GetQuizSkillInteractor } from '@/interactors/get-quiz-skill.interactor';
 import { GetQuizProfileInteractor } from '@/interactors/get-quiz-profile.interactor';
 import { GetQuizNpInteractor } from '@/interactors/get-quiz-np.interactor';
-// import { DatabaseModule } from '@/database/database.module';
-// import { RepositoriesModule } from '@/repositories/repositories.module';
+import { DatabaseModule } from '@/database/database.module';
+import { RepositoriesModule } from '@/repositories/repositories.module';
 import { VertexAiApiService } from '@/services/vertex-ai-api.service';
 
 @Module({
@@ -25,13 +25,12 @@ import { VertexAiApiService } from '@/services/vertex-ai-api.service';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    // DatabaseModule,
-    // RepositoriesModule,
+    DatabaseModule,
+    RepositoriesModule,
   ],
   controllers: [AppController, QuizController, ServantsController],
   providers: [
     AppService,
-    QuizService,
     ServantsService,
     // Services / Gateways
     FgoGameApiService,
