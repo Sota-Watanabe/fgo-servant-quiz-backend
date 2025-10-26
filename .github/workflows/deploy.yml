@@ -13,7 +13,6 @@ permissions:
 
 env:
   PROJECT_ID: fgo-servant-quiz
-  VERTEX_AI_PROJECT_ID: fgo-servant-quiz
   REGION: asia-northeast1
   REPOSITORY: fgo-quiz
   IMAGE_NAME: backend
@@ -95,6 +94,9 @@ jobs:
             --region ${{ env.REGION }} \
             --service-account ${{ secrets.GCP_SERVICE_ACCOUNT }} \
             --allow-unauthenticated \
-            --port 8080
+            --port 8080 \
+            --set-env-vars "VERTEX_AI_PROJECT_ID=${{ env.PROJECT_ID }}" \
+            --set-env-vars "VERTEX_AI_LOCATION=${{ env.REGION }}" \
+            --set-env-vars "VERTEX_AI_MODEL=gemini-2.0-flash"
         env:
           CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE: ${{ steps.auth.outputs.credentials_file_path }}
