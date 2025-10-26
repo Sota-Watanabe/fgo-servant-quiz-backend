@@ -19,6 +19,12 @@ export class ServantsOptions {
   @ApiProperty({ description: 'クラスID', example: 1 })
   classId: number;
 
+  @ApiProperty({
+    description: '顔画像URL',
+    example: 'https://example.com/face.jpg',
+  })
+  face: string;
+
   constructor(data: ServantDto) {
     this.id = data.id;
     this.name = data.name;
@@ -27,6 +33,7 @@ export class ServantsOptions {
         ? data.originalOverwriteName
         : undefined;
     this.classId = data.classId;
+    this.face = data.face;
   }
 }
 
