@@ -9,10 +9,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
         const loggingRaw = configService.get<string>('DB_LOGGING', 'false');
+        const host = configService.get<string>('DB_HOST', '127.0.0.1');
+        const socketPath =
+          configService.get<string>('DB_SOCKET_PATH') ?? undefined;
 
         return {
           type: 'mysql' as const,
-          host: configService.get<string>('DB_HOST', '127.0.0.1'),
+          host,
           port: Number.parseInt(
             configService.get<string>('DB_PORT', '3306'),
             10,
@@ -28,9 +31,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
             'DB_CHARSET',
             'utf8mb4_unicode_ci',
           ),
-          extra: {
-            socketPath: process.env.DB_HOST, // For Google Cloud SQL Unix socket
-          },
+          extra: socketPath ? { socketPath } : undefined,
         };
       },
     }),
