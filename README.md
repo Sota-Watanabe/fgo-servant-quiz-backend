@@ -1,98 +1,122 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# FGO Servant Quiz Backend
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Backend for the Fate/Grand Order servant quiz application. The service fetches
+servant data from the local Atlas Academy dump and the public Atlas Academy API
+to deliver quiz questions (skill/profile) and servant option lists to the
+frontend. The project targets Google Cloud Run and documents its API via
+Swagger/OpenAPI.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Features
 
-## Description
+- Serves quiz endpoints for random servant skill and profile questions.
+- Provides servant option data sourced from `data/basic_servant.json`.
+- Combines local dumps with live Atlas Academy API calls (`https://api.atlasacademy.io`) using the Interactor/Service/Gateway layers.
+- Generates OpenAPI definitions for client integrations.
+- Supports Vertex AI (Gemini) access through a dedicated gateway.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Architecture
 
-## Project setup
+Requests flow through a clean layered structure:
 
-```bash
-$ npm install
-```
+`Controller → Interactor → Service → Gateway → Data Source → DTO → Response`
 
-## Compile and run the project
+- **Controller layer**: HTTP endpoints (`QuizController`, `ServantsController`) with Swagger decorators.
+- **Interactor layer** (`src/interactors`): Orchestrates dump access and API calls to build response DTOs.
+- **Service layer** (`src/services`): Infrastructure concerns such as reading the local dump and calling external APIs.
+- **Gateway layer** (`src/gateways`): Axios and Vertex AI clients. Atlas Academy responses are optionally dumped into `data/` for debugging.
+- **DTOs** (`src/dto`): Define outward-facing response models and Atlas Academy types.
 
-```bash
-# development
-$ npm run start
+Refer to the project instructions in this repository for deeper architectural guidance.
 
-# watch mode
-$ npm run start:dev
+## Prerequisites
 
-# production mode
-$ npm run start:prod
-```
+- Node.js 18 (matches the Docker runtime) and npm.
+- Access to the Atlas Academy API (public, no key required).
+- (Optional) Google Cloud Vertex AI project and service account key for local runs that rely on Gemini models.
+- (Optional) MySQL 8 instance if you enable the persistence features described in `DATABASE.md`.
 
-## Run tests
+## Setup
 
-```bash
-# unit tests
-$ npm run test
+1. Install dependencies:
 
-# e2e tests
-$ npm run test:e2e
+   ```bash
+   npm ci
+   ```
 
-# test coverage
-$ npm run test:cov
-```
+2. Copy the sample environment file and fill in the values that apply to your environment:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+   | Variable | Purpose | Notes |
+   | --- | --- | --- |
+   | `NODE_ENV` | Nest runtime mode | `development` locally, `production` in Cloud Run |
+   | `PORT` | Port the Nest app listens on | Defaults to `8888`; Cloud Run injects `PORT` |
+   | `FRONTEND_URL` | Allowed CORS origin in production | Keep the local origin when developing |
+   | `VERTEX_AI_*` | Vertex AI project, location, model, credentials | `VERTEX_AI_CREDENTIALS_FILE` is only needed locally when not using Workload Identity |
+   | `DB_*` | MySQL connection settings | See `DATABASE.md` for defaults and Docker snippets |
+
+   The checked-in `.env` shows a working local baseline.
+
+3. (Optional) Start a local MySQL instance (see the Docker command in `DATABASE.md`) if you plan to exercise database features.
+
+## Running the Application
+
+- Development with hot-reload:
+
+  ```bash
+  npm run start:dev
+  ```
+
+- Production build and run:
+
+  ```bash
+  npm run build
+  npm run start:prod
+  ```
+
+- Simple one-off launch (no watch):
+
+  ```bash
+  npm run dev
+  ```
+
+The server listens on `http://localhost:8888` by default. Swagger UI is served at `http://localhost:8888/api`.
+
+## API Documentation
+
+- Interactive docs: run the server and open Swagger UI at `/api`.
+- Generate OpenAPI spec (writes `openapi.json` to the project root):
+
+  ```bash
+  npm run generate:openapi
+  ```
+
+See `API_DOCS.md` for endpoint summaries and usage notes.
+
+## Quality and Tooling
+
+- Linting: `npm run lint`
+- Formatting: `npm run format`
+- Unit tests: `npm run test`
+- Watch mode: `npm run test:watch`
+- Coverage: `npm run test:cov`
+
+`jest --passWithNoTests` is enabled, so empty suites will not fail CI while you expand coverage.
 
 ## Deployment
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+- The repository is configured for Google Cloud Run with a multi-stage Docker build (`Dockerfile`).
+- `.github/workflows/deploy.yml` builds and pushes an image to Artifact Registry, then deploys it to Cloud Run using Workload Identity Federation.
+- Required GitHub secrets for the workflow are described in `DEPLOY.md`. Ensure `FRONTEND_URL` is set so CORS is enforced in production.
+- Cloud Run deploys with `NODE_ENV=production` and uses service account-based authentication to call Vertex AI (no local credentials file required).
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+## Additional Documentation
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
+- `API_DOCS.md`: Endpoint behavior and OpenAPI generation steps.
+- `DEPLOY.md`: Cloud Run deployment and GitHub Actions secrets.
+- `DATABASE.md`: Database configuration, Docker snippets, and repository usage tips.
+- `data/`: Contains `basic_servant.json` (Atlas Academy dump) and optional debug artifacts from gateways.
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Feel free to extend the Interactor + Service + Gateway pattern when introducing new features to keep the boundaries consistent.
