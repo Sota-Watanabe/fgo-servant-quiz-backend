@@ -12,7 +12,7 @@ permissions:
   id-token: write
 
 env:
-  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  PROJECT_ID: fgo-servant-quiz
   REGION: asia-northeast1
   REPOSITORY: fgo-quiz
   IMAGE_NAME: backend
