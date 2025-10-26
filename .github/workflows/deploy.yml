@@ -30,6 +30,16 @@ jobs:
         uses: actions/checkout@v4
 
       # ------------------------------------
+      # Node.js セットアップ（マイグレーション実行用）
+      # ------------------------------------
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      # ------------------------------------
       # Workload Identity Federation 認証
       # ------------------------------------
       - name: Authenticate to Google Cloud
@@ -83,6 +93,43 @@ jobs:
           docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
         env:
           CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE: ${{ steps.auth.outputs.credentials_file_path }}
+
+      # ------------------------------------
+      # TypeORM マイグレーション実行
+      # ------------------------------------
+      - name: Run database migrations
+        env:
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file_path }}
+        run: |
+          set -euo pipefail
+          wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy
+          chmod +x cloud_sql_proxy
+          ./cloud_sql_proxy -instances=${{ secrets.CLOUD_SQL_INSTANCE }}=tcp:3306 &
+          PROXY_PID=$!
+          trap 'kill "$PROXY_PID"' EXIT
+
+          for attempt in {1..10}; do
+            if bash -c "echo > /dev/tcp/127.0.0.1/3306" >/dev/null 2>&1; then
+              echo "Cloud SQL Proxy is ready."
+              break
+            fi
+
+            if [ "${attempt}" -eq 10 ]; then
+              echo "Cloud SQL Proxy failed to start within expected time." >&2
+              exit 1
+            fi
+
+            echo "Waiting for Cloud SQL Proxy (attempt ${attempt})..."
+            sleep 2
+          done
+
+          npm ci
+          npm run migrate:run
 
       # ------------------------------------
       # Cloud Run デプロイ
