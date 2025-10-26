@@ -6,7 +6,7 @@ on:
       - main
   workflow_dispatch:
 
-# ✅ OIDC 認証のために必要（ジョブ外に置く）
+# ✅ OIDC 認証のために必要
 permissions:
   contents: read
   id-token: write
@@ -46,7 +46,7 @@ jobs:
         uses: google-github-actions/setup-gcloud@v1
 
       # ------------------------------------
-      # 認証確認（gcloudはCLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDEを参照）
+      # 認証確認（デバッグ用）
       # ------------------------------------
       - name: Debug GCP account
         run: |
@@ -56,7 +56,7 @@ jobs:
           CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE: ${{ steps.auth.outputs.credentials_file_path }}
 
       # ------------------------------------
-      # Artifact Registry の Docker 認証設定
+      # Artifact Registry 認証設定
       # ------------------------------------
       - name: Configure Docker for Artifact Registry
         run: |
@@ -70,8 +70,9 @@ jobs:
       - name: Build Docker image
         run: |
           docker build -t ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} .
-          docker tag ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
-                     ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
+          docker tag \
+            ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
+            ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:latest
 
       # ------------------------------------
       # Artifact Registry へ push
@@ -84,7 +85,7 @@ jobs:
           CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE: ${{ steps.auth.outputs.credentials_file_path }}
 
       # ------------------------------------
-      # Cloud Run デプロイ（--port 8080 を明示指定 ✅）
+      # Cloud Run デプロイ
       # ------------------------------------
       - name: Deploy to Cloud Run
         run: |
@@ -97,6 +98,8 @@ jobs:
             --port 8080 \
             --set-env-vars "VERTEX_AI_PROJECT_ID=${{ env.PROJECT_ID }}" \
             --set-env-vars "VERTEX_AI_LOCATION=${{ env.REGION }}" \
-            --set-env-vars "VERTEX_AI_MODEL=gemini-2.0-flash"
+            --set-env-vars "VERTEX_AI_MODEL=gemini-2.0-flash" \
+            --set-env-vars "FRONTEND_URL=${{ secrets.FRONTEND_URL }}" \
+            --set-env-vars "NODE_ENV=production"
         env:
           CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE: ${{ steps.auth.outputs.credentials_file_path }}
