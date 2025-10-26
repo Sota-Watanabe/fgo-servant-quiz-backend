@@ -4,7 +4,8 @@ import { VertexAI, type GenerateContentResponse } from '@google-cloud/vertexai';
 @Injectable()
 export class VertexAiGateway {
   private readonly logger = new Logger(VertexAiGateway.name);
-  private readonly projectId = process.env.VERTEX_AI_PROJECT_ID;
+  private readonly projectId =
+    process.env.VERTEX_AI_PROJECT_ID ?? 'fgo-servant-quiz';
   private readonly location =
     process.env.VERTEX_AI_LOCATION ?? 'asia-northeast1';
   private readonly model = process.env.VERTEX_AI_MODEL ?? 'gemini-2.5-flash';
