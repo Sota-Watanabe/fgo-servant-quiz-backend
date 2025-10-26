@@ -50,7 +50,7 @@ const dataSourceOptions: DataSourceOptions = {
   host: process.env.DB_HOST ?? '127.0.0.1',
   port: Number.parseInt(process.env.DB_PORT ?? '3306', 10),
   username: process.env.DB_USER ?? 'root',
-  password: process.env.DB_PASSWORD ?? '',
+  password: process.env.DB_PASSWORD ?? 'example-password',
   database: process.env.DB_NAME ?? 'fgo_servant_quiz',
   timezone: process.env.DB_TIMEZONE ?? 'Z',
   charset: process.env.DB_CHARSET ?? 'utf8mb4_unicode_ci',

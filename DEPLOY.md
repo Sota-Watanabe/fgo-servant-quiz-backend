@@ -131,6 +131,84 @@ GitHub Actionsワークフローは以下の場合に実行されます：
 --set-env-vars NODE_ENV=production,DATABASE_URL=${{ secrets.DATABASE_URL }}
 ```
 
+## データベース（Cloud SQL for MySQL）のセットアップとデプロイ手順
+
+本番環境では Cloud SQL for MySQL を利用してアプリケーションと同時にデータベースもデプロイします。以下の手順でインフラとアプリを紐付けてください。
+
+### 1. Cloud SQL インスタンス作成
+
+```bash
+gcloud sql instances create fgo-servant-quiz-sql \
+  --database-version=MYSQL_8_0 \
+  --tier=db-g1-small \
+  --region=asia-northeast1
+```
+
+### 2. データベースとユーザーの作成
+
+```bash
+gcloud sql databases create fgo_servant_quiz --instance=fgo-servant-quiz-sql
+
+gcloud sql users create fgo_app_user \
+  --instance=fgo-servant-quiz-sql \
+  --password=YOUR_STRONG_PASSWORD
+```
+
+### 3. Cloud Run との接続設定
+
+1. インスタンス接続名を取得：
+   ```bash
+   gcloud sql instances describe fgo-servant-quiz-sql \
+     --format='value(connectionName)'
+   ```
+2. Cloud Run サービスに Cloud SQL 接続を追加：
+   ```bash
+   gcloud run services update fgo-servant-quiz-backend \
+     --region=asia-northeast1 \
+     --add-cloudsql-instances=PROJECT_ID:asia-northeast1:fgo-servant-quiz-sql
+   ```
+3. 環境変数を設定（`DB_HOST` は Cloud SQL Auth Proxy のソケットパスを指定）：
+   ```bash
+   gcloud run services update fgo-servant-quiz-backend \
+     --region=asia-northeast1 \
+     --set-env-vars DB_HOST=/cloudsql/PROJECT_ID:asia-northeast1:fgo-servant-quiz-sql,DB_USER=fgo_app_user,DB_PASSWORD=YOUR_STRONG_PASSWORD,DB_NAME=fgo_servant_quiz,DB_PORT=3306
+   ```
+
+### 4. マイグレーションの実行
+
+アプリの初回デプロイまたはスキーマ変更時は TypeORM マイグレーションを Cloud SQL に対して実行します。
+
+#### ローカルから実行する場合
+Cloud SQL Auth Proxy を起動した状態で以下を実行：
+```bash
+npm ci
+npm run migrate:run
+```
+
+#### GitHub Actions から実行する場合の例
+Cloud SQL Auth Proxy をワークフロー内で立ち上げ、同じアーティファクトを使ってマイグレーションを流します。
+
+```yaml
+      - name: Start Cloud SQL Proxy
+        run: |
+          wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy
+          chmod +x cloud_sql_proxy
+          ./cloud_sql_proxy -instances=${{ secrets.CLOUDSQL_CONNECTION_NAME }}=tcp:3306 &
+
+      - name: Run database migrations
+        env:
+          DB_HOST: 127.0.0.1
+          DB_PORT: 3306
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_NAME: fgo_servant_quiz
+        run: |
+          npm ci
+          npm run migrate:run
+```
+
+> **Tip:** Cloud SQL の資格情報は Secret Manager や GitHub Secrets に保管し、`gcloud run deploy` の `--set-secrets` や `--set-env-vars` で注入してください。
+
 ## ローカルでのDockerテスト
 
 ```bash

@@ -66,3 +66,5 @@ entities become available as soon as you add them to a feature module with
   `DB_PORT`, and credentials accordingly.
 - Disable schema synchronization by keeping `NODE_ENV=production` in Cloud Run
   and manage schema changes with migrations.
+- See `DEPLOY.md` for a Cloud SQL provisioning guide and examples on how to run
+  `npm run migrate:run` during deployment.
