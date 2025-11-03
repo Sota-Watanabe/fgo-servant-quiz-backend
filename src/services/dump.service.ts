@@ -31,4 +31,12 @@ export class DumpService {
     const randomIndex = Math.floor(Math.random() * servants.length);
     return servants[randomIndex];
   }
+
+  /**
+   * 指定したIDのサーヴァントを取得
+   */
+  async getServantById(servantId: number): Promise<ServantDto | undefined> {
+    const servants = await this.getDumpServants();
+    return servants.find((servant) => servant.id === servantId);
+  }
 }

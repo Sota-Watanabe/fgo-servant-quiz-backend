@@ -1,5 +1,5 @@
-import { Controller, Get } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Controller, Get, Query, BadRequestException } from '@nestjs/common';
+import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { GetQuizProfileInteractor } from '@/interactors/get-quiz-profile.interactor';
 import { GetQuizSkillInteractor } from '@/interactors/get-quiz-skill.interactor';
 import { GetQuizNpInteractor } from '@/interactors/get-quiz-np.interactor';
@@ -19,15 +19,34 @@ export class QuizController {
   @Get('skill')
   @ApiOperation({
     summary: 'スキルクイズの取得',
-    description: 'ランダムなサーヴァントのスキル情報を返します',
+    description:
+      'ランダム、またはクエリで指定したサーヴァントIDのスキル情報を返します',
+  })
+  @ApiQuery({
+    name: 'servantId',
+    required: false,
+    type: Number,
+    description: '指定すると該当サーヴァントのスキル情報を返します',
   })
   @ApiResponse({
     status: 200,
     description: 'スキルクイズデータ',
     type: ServantSkillGetResponseDto,
   })
-  async getSkillQuiz(): Promise<ServantSkillGetResponseDto> {
-    return await this.getQuizSkillInteractor.execute();
+  async getSkillQuiz(
+    @Query('servantId') servantId?: string,
+  ): Promise<ServantSkillGetResponseDto> {
+    let parsedServantId: number | undefined;
+
+    if (servantId !== undefined && servantId !== '') {
+      parsedServantId = Number(servantId);
+
+      if (Number.isNaN(parsedServantId)) {
+        throw new BadRequestException('servantId must be a number');
+      }
+    }
+
+    return await this.getQuizSkillInteractor.execute(parsedServantId);
   }
 
   @Get('profile')
