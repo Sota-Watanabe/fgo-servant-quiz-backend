@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { ServantProfileGetResponseDto } from '@/dto/servant-profile-get-response.dto';
@@ -18,27 +18,34 @@ export class GetQuizProfileInteractor {
     private readonly dataSource: DataSource,
   ) {}
 
-  async execute(): Promise<ServantProfileGetResponseDto> {
+  async execute(servantId?: number): Promise<ServantProfileGetResponseDto> {
     return await this.dataSource.transaction(
       async (manager): Promise<ServantProfileGetResponseDto> => {
-        // ランダムなサーヴァントを選択
-        const randomServant = await this.dumpService.getRandomServant();
+        const targetServant = servantId
+          ? await this.dumpService.getServantById(servantId)
+          : await this.dumpService.getRandomServant();
+
+        if (!targetServant) {
+          throw new NotFoundException(
+            `Servant with id ${servantId as number} was not found in dump.`,
+          );
+        }
 
         // サーヴァントの詳細情報を取得
         const servantDetail = await this.fgoGameApiService.getServantDetail(
-          randomServant.id,
+          targetServant.id,
         );
 
         const rawProfile = servantDetail.profile.comments[0]?.comment ?? '';
 
         const quizResult = await this.quizResultRepository.findByServantId(
-          randomServant.id,
+          targetServant.id,
           manager,
         );
 
         if (quizResult?.maskedProfile) {
           console.log('---- Quiz Profile Cache Hit ----');
-          console.log('servantId:', randomServant.id);
+          console.log('servantId:', targetServant.id);
           console.log('maskedProfile:', quizResult.maskedProfile);
           console.log('--------------------\n');
 
@@ -56,7 +63,7 @@ export class GetQuizProfileInteractor {
         await this.quizResultRepository.save(
           {
             id: quizResult?.id,
-            servantId: randomServant.id,
+            servantId: targetServant.id,
             rawProfile,
             maskedProfile,
           },
