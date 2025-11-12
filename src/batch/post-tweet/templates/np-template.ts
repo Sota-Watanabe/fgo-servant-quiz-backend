@@ -46,19 +46,6 @@ export const buildNoblePhantasmHtml = (payload: unknown): string => {
   const npCard = formatCardLabel(getString(noblePhantasmRecord.card));
   const npDetail = getString(noblePhantasmRecord.detail);
 
-  const effectFlags = Array.isArray(noblePhantasmRecord.effectFlags)
-    ? noblePhantasmRecord.effectFlags.filter(
-        (flag): flag is string =>
-          typeof flag === 'string' && flag.trim() !== '',
-      )
-    : [];
-
-  const effectHtml = effectFlags.length
-    ? effectFlags
-        .map((flag) => `<span class="chip">${escapeHtml(flag)}</span>`)
-        .join('')
-    : '<span class="chip chip--muted">効果情報なし</span>';
-
   const detailHtml = npDetail
     ? `<p class="np-detail">${formatMultiline(npDetail)}</p>`
     : '<p class="np-detail np-detail--muted">宝具詳細は現在取得できません。</p>';
@@ -78,7 +65,6 @@ export const buildNoblePhantasmHtml = (payload: unknown): string => {
 
   const content = `<section class="question-card np-card">
     <div class="np-details">
-      <span class="badge">Noble Phantasm</span>
       <h2 class="question-title">この宝具を持つサーヴァントは？</h2>
       <h3 class="np-name">${escapeHtml(npName)}</h3>
       ${npRuby ? `<p class="np-ruby">${escapeHtml(npRuby)}</p>` : '<div></div>'}
@@ -86,10 +72,6 @@ export const buildNoblePhantasmHtml = (payload: unknown): string => {
         ${metaHtml}
       </div>
       ${detailHtml}
-      <div class="chip-group">
-        <div class="chip-label">Effect Flags</div>
-        <div class="chip-list">${effectHtml}</div>
-      </div>
     </div>
   </section>`;
 

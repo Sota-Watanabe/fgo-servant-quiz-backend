@@ -32,19 +32,15 @@ export const buildProfileHtml = (payload: unknown): string => {
   const content = `<section class="question-card profile-card">
     <h2 class="question-title">このプロフィールを持つサーヴァントは？</h2>
     <div class="profile-section">
-      <div class="profile-section__inner">
-        <div class="profile-label">
-          <span>プロフィール</span>
-          ${
-            condMessage
-              ? `<span class="profile-cond-pill">${escapeHtml(
-                  condMessage,
-                )}</span>`
-              : ''
-          }
-        </div>
-        <p class="profile-text">${formatMultiline(profileComment)}</p>
+      <div class="profile-label">
+        <span>プロフィール</span>
+        ${
+          condMessage
+            ? `<span class="profile-cond-pill">${escapeHtml(condMessage)}</span>`
+            : ''
+        }
       </div>
+      <p class="profile-text">${formatMultiline(profileComment)}</p>
     </div>
   </section>`;
 
