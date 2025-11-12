@@ -15,15 +15,15 @@ RUN npm run build
 FROM node:20-alpine AS production
 WORKDIR /app
 
-# Puppeteer / Chromium dependencies
+# Puppeteer / Chromium dependencies + Notoフォント
 RUN apk add --no-cache \
   chromium \
   nss \
   freetype \
   harfbuzz \
   ca-certificates \
-  ttf-freefont \
-  wqy-zenhei \
+  font-noto \
+  font-noto-cjk \
   dumb-init \
   curl
 
