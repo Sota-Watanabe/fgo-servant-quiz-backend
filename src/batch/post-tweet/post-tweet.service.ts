@@ -22,7 +22,8 @@ export class PostTweetService {
       const payload = await this.fetchQuizPayload(endpoint);
       const html = buildHtml(endpoint, payload);
       const image = await this.renderHtmlToImage(html);
-      await this.tweetImage(image);
+      const answerUrl = this.buildAnswerUrl(endpoint, payload);
+      await this.tweetImage(endpoint, image, answerUrl);
 
       this.logger.log(
         `Tweet sent successfully from endpoint ${endpoint}`,
@@ -73,17 +74,81 @@ export class PostTweetService {
     }
   }
 
-  private async tweetImage(image: Buffer): Promise<void> {
+  private async tweetImage(
+    endpoint: string,
+    image: Buffer,
+    answerUrl: string,
+  ): Promise<void> {
     const credentials = this.readTwitterCredentials();
     const twitterClient = new TwitterApi(credentials);
+    const tweetText = this.buildTweetText(endpoint, answerUrl);
 
     const mediaId = await twitterClient.v1.uploadMedia(image, {
       type: 'png',
     });
 
-    await twitterClient.v2.tweet('今日の結果はこちら！', {
+    await twitterClient.v2.tweet(tweetText, {
       media: { media_ids: [mediaId] },
     });
+  }
+
+  private buildTweetText(endpoint: string, answerUrl: string): string {
+    const lines = [
+      '🧩 FGO サーヴァント当てクイズ',
+      `答えはこちら → ${answerUrl}`,
+      '#FGO',
+    ];
+
+    return lines.join('\n');
+  }
+
+  private buildAnswerUrl(endpoint: string, payload: unknown): string {
+    const servantId = this.extractServantId(payload);
+
+    if (!servantId) {
+      throw new Error('Servant ID is missing in quiz payload.');
+    }
+
+    const baseUrl = 'https://fate-grand-quiz.com';
+    const path = this.getAnswerPath(endpoint);
+    const url = new URL(path, baseUrl);
+    url.searchParams.set('servantId', servantId);
+    return url.toString();
+  }
+
+  private extractServantId(payload: unknown): string | null {
+    if (!payload || typeof payload !== 'object') {
+      return null;
+    }
+
+    const record = payload as Record<string, unknown>;
+    const rawId = record.id;
+
+    if (typeof rawId === 'number') {
+      return String(rawId);
+    }
+
+    if (typeof rawId === 'string' && rawId.trim().length > 0) {
+      return rawId.trim();
+    }
+
+    return null;
+  }
+
+  private getAnswerPath(endpoint: string): string {
+    if (endpoint.includes('skill')) {
+      return '/quiz/skill';
+    }
+
+    if (endpoint.includes('profile')) {
+      return '/quiz/profile';
+    }
+
+    if (endpoint.includes('np')) {
+      return '/quiz/np';
+    }
+
+    return '/quiz';
   }
 
   private readTwitterCredentials() {

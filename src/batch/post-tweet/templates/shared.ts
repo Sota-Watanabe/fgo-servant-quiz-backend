@@ -448,7 +448,7 @@ export const renderDocument = (
       ${heroHtml}
       ${mainContent}
       <footer class="footer">
-        <span>Atlas Academy API × FGO Servant Quiz</span>
+        <span>presented by Fate/Grand Quiz</span>
         <span>${escapeHtml(todayLabel)}</span>
       </footer>
     </div>
