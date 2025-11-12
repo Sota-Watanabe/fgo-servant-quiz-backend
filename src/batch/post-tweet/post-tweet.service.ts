@@ -4,6 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import { TwitterApi } from 'twitter-api-v2';
 import { lastValueFrom } from 'rxjs';
 import puppeteer from 'puppeteer';
+import { buildHtml } from '@/batch/post-tweet/post-tweet-html.builder';
 
 @Injectable()
 export class PostTweetService {
@@ -19,7 +20,7 @@ export class PostTweetService {
     try {
       const endpoint = this.pickEndpoint();
       const payload = await this.fetchQuizPayload(endpoint);
-      const html = this.buildHtml(endpoint, payload);
+      const html = buildHtml(endpoint, payload);
       const image = await this.renderHtmlToImage(html);
       await this.tweetImage(image);
 
@@ -53,77 +54,6 @@ export class PostTweetService {
     const url = `${baseUrl.replace(/\/$/, '')}${endpoint}`;
     const response = await lastValueFrom(this.httpService.get(url));
     return response.data;
-  }
-
-  private buildHtml(endpoint: string, payload: unknown): string {
-    const title = this.makeTitle(endpoint);
-    const payloadString = this.escapeHtml(JSON.stringify(payload, null, 2));
-
-    return `<!DOCTYPE html>
-<html lang="ja">
-  <head>
-    <meta charset="UTF-8" />
-    <style>
-      body {
-        font-family: 'Noto Sans JP', 'Hiragino Sans', 'Meiryo', sans-serif;
-        background: #0f172a;
-        color: #f8fafc;
-        margin: 0;
-        padding: 32px;
-        width: 800px;
-        box-sizing: border-box;
-      }
-      .card {
-        background: rgba(15, 23, 42, 0.8);
-        border-radius: 16px;
-        padding: 24px;
-        box-shadow: 0 20px 25px rgba(15, 23, 42, 0.45);
-      }
-      h1 {
-        font-size: 32px;
-        margin-top: 0;
-        margin-bottom: 16px;
-      }
-      pre {
-        background: rgba(15, 23, 42, 0.6);
-        padding: 16px;
-        border-radius: 12px;
-        font-size: 14px;
-        line-height: 1.6;
-        overflow: hidden;
-        white-space: pre-wrap;
-        word-break: break-all;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="card">
-      <h1>${title}</h1>
-      <p>今日のクイズ結果をお届け！</p>
-      <pre>${payloadString}</pre>
-    </div>
-  </body>
-</html>`;
-  }
-
-  private makeTitle(endpoint: string): string {
-    if (endpoint.includes('skill')) {
-      return 'スキル クイズ結果';
-    }
-    if (endpoint.includes('profile')) {
-      return 'プロフィール クイズ結果';
-    }
-    if (endpoint.includes('np')) {
-      return '宝具 クイズ結果';
-    }
-    return 'FGO クイズ結果';
-  }
-
-  private escapeHtml(value: string): string {
-    return value
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;');
   }
 
   private async renderHtmlToImage(html: string): Promise<Buffer> {
