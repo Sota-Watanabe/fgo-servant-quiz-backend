@@ -148,6 +148,11 @@ jobs:
             --set-env-vars "VERTEX_AI_LOCATION=${{ env.REGION }}" \
             --set-env-vars "VERTEX_AI_MODEL=gemini-2.5-flash" \
             --set-env-vars "FRONTEND_URL=${{ secrets.FRONTEND_URL }}" \
+            --set-env-vars "BATCH_API_BASE_URL=${{ secrets.BATCH_API_BASE_URL }}" \
+            --set-env-vars "TWITTER_API_KEY=${{ secrets.TWITTER_API_KEY }}" \
+            --set-env-vars "TWITTER_API_SECRET=${{ secrets.TWITTER_API_SECRET }}" \
+            --set-env-vars "TWITTER_ACCESS_TOKEN=${{ secrets.TWITTER_ACCESS_TOKEN }}" \
+            --set-env-vars "TWITTER_ACCESS_SECRET=${{ secrets.TWITTER_ACCESS_SECRET }}" \
             --set-env-vars "NODE_ENV=production" \
             --set-env-vars "DB_SOCKET_PATH=/cloudsql/${{ secrets.CLOUD_SQL_INSTANCE }}" \
             --set-env-vars "DB_HOST=localhost" \
