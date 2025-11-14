@@ -12,6 +12,8 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/src/main",
+    "start:batch:dev": "nest start --watch --entryFile batch-main",
+    "start:batch:prod": "node dist/src/batch-main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest --passWithNoTests",
     "test:watch": "jest --watch",

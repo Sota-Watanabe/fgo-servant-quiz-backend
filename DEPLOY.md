@@ -120,10 +120,38 @@ GitHub Actionsワークフローは以下の場合に実行されます：
 
 ワークフロー内の `gcloud run deploy` コマンドは `--service-account=${{ secrets.GCP_SERVICE_ACCOUNT_EMAIL }}` を付与し、Cloud Run 実行サービスアカウントを明示的に指定します。
 
+## Cloud Run サービスの分離
+
+`batch/` 配下の処理は通常のAPIとは別の Cloud Run サービスとして運用します。同じコンテナイメージを Artifact Registry に1度だけプッシュし、以下の2サービスへデプロイしてください。
+
+1. **APIサービス**（例: `fgo-servant-quiz-api`）  
+   - 追加設定は不要です。Dockerfileのデフォルトエントリ（`dist/src/main.js`）が利用されます。
+2. **バッチサービス**（例: `fgo-servant-quiz-batch`）  
+   - 環境変数 `APP_ENTRY=dist/src/batch-main.js` を指定し、バッチ用の Nest アプリを起動します。  
+   - バッチ処理がAPIへアクセスできるよう、`QUIZ_API_BASE_URL` に API サービスのベースURL（末尾スラッシュ無し）を設定してください。
+
+デプロイ例：
+
+```bash
+# API
+gcloud run deploy fgo-servant-quiz-api \
+  --image=asia-northeast1-docker.pkg.dev/PROJECT_ID/fgo-quiz/backend:TAG \
+  --region=asia-northeast1 \
+  --set-env-vars=NODE_ENV=production,FRONTEND_URL=https://fate-grand-quiz.com
+
+# Batch
+gcloud run deploy fgo-servant-quiz-batch \
+  --image=asia-northeast1-docker.pkg.dev/PROJECT_ID/fgo-quiz/backend:TAG \
+  --region=asia-northeast1 \
+  --set-env-vars=NODE_ENV=production,APP_ENTRY=dist/src/batch-main.js,QUIZ_API_BASE_URL=https://fgo-servant-quiz-api-xxxxxxxx-asia-northeast1.run.app
+```
+
 ## 環境変数
 
 ### プロダクション環境で設定される環境変数
 - `NODE_ENV=production`
+- `APP_ENTRY` — Dockerイメージ内で実行するエントリポイント。APIサービスは既定値 `dist/src/main.js` を利用し、バッチサービスは `dist/src/batch-main.js` を指定します。
+- `QUIZ_API_BASE_URL` — バッチサービスがクイズAPIへHTTPアクセスする際のベースURL。ローカルでは `http://localhost:8888` を利用し、本番ではAPIの公開URLを設定します。
 
 ### 追加の環境変数が必要な場合
 `deploy.yml`の`--set-env-vars`セクションに追加してください：
@@ -215,8 +243,14 @@ Cloud SQL Auth Proxy をワークフロー内で立ち上げ、同じアーテ�
 # Dockerイメージのビルド
 docker build -t fgo-backend .
 
-# コンテナの実行
-docker run -p 3000:3000 fgo-backend
+# APIコンテナの実行
+docker run -p 8080:8080 fgo-backend
+
+# バッチコンテナの実行（別ターミナルでAPIを起動しておくこと）
+docker run -p 8090:8080 \
+  -e APP_ENTRY=dist/src/batch-main.js \
+  -e QUIZ_API_BASE_URL=http://host.docker.internal:8080 \
+  fgo-backend
 ```
 
 ## トラブルシューティング
@@ -234,9 +268,5 @@ gcloud logs read --service=fgo-servant-quiz-backend --limit=50
 
 ## サービス情報
 
-- **サービス名**: `fgo-servant-quiz-backend`
-- **リージョン**: `asia-northeast1`
-- **ポート**: `3000`
-- **メモリ**: `1Gi`
-- **CPU**: `1`
-- **インスタンス範囲**: `0-10`
+- **APIサービス例**: `fgo-servant-quiz-api`（リージョン: `asia-northeast1`, メモリ: `1Gi`, CPU: `1`, ポート: Cloud Run により自動割当）
+- **バッチサービス例**: `fgo-servant-quiz-batch`（同上、`APP_ENTRY=dist/src/batch-main.js` を必ず設定）

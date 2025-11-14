@@ -5,8 +5,6 @@ import { AppService } from './app.service';
 import { QuizController } from './quiz/quiz.controller';
 import { ServantsController } from './servants/servants.controller';
 import { ServantsService } from './servants/servants.service';
-import { PostTweetModule } from './batch/post-tweet/post-tweet.module';
-
 // New architecture imports
 import { FgoGameApiService } from '@/services/fgo-game-api.service';
 import { DumpService } from '@/services/dump.service';
@@ -27,7 +25,6 @@ import { VertexAiApiService } from '@/services/vertex-ai-api.service';
     }),
     DatabaseModule,
     RepositoriesModule,
-    PostTweetModule,
   ],
   controllers: [AppController, QuizController, ServantsController],
   providers: [

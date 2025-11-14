@@ -46,12 +46,7 @@ export class PostTweetService {
   }
 
   private async fetchQuizPayload(endpoint: string): Promise<unknown> {
-    const parsedPort = parseInt(
-      this.configService.get<string>('PORT') ?? '',
-      10,
-    );
-    const port = Number.isNaN(parsedPort) ? 8888 : parsedPort;
-    const baseUrl = `http://localhost:${port}`;
+    const baseUrl = this.resolveQuizApiBaseUrl();
     const url = `${baseUrl.replace(/\/$/, '')}${endpoint}`;
     const response = await lastValueFrom(this.httpService.get(url));
     return response.data;
@@ -72,6 +67,20 @@ export class PostTweetService {
     } finally {
       await browser.close();
     }
+  }
+
+  private resolveQuizApiBaseUrl(): string {
+    const configured = this.configService.get<string>('QUIZ_API_BASE_URL');
+    if (configured && configured.trim().length > 0) {
+      return configured.trim();
+    }
+
+    const parsedPort = parseInt(
+      this.configService.get<string>('PORT') ?? '',
+      10,
+    );
+    const port = Number.isNaN(parsedPort) ? 8888 : parsedPort;
+    return `http://localhost:${port}`;
   }
 
   private async tweetImage(

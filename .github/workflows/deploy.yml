@@ -16,7 +16,8 @@ env:
   REGION: asia-northeast1
   REPOSITORY: fgo-quiz
   IMAGE_NAME: backend
-  SERVICE_NAME: fgo-servant-quiz-backend
+  API_SERVICE_NAME: fgo-servant-quiz-api
+  BATCH_SERVICE_NAME: fgo-servant-quiz-batch
 
 jobs:
   deploy:
@@ -134,9 +135,9 @@ jobs:
       # ------------------------------------
       # Cloud Run デプロイ
       # ------------------------------------
-      - name: Deploy to Cloud Run
+      - name: Deploy API service to Cloud Run
         run: |
-          gcloud run deploy ${{ env.SERVICE_NAME }} \
+          gcloud run deploy ${{ env.API_SERVICE_NAME }} \
             --image ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
             --platform managed \
             --region ${{ env.REGION }} \
@@ -148,11 +149,6 @@ jobs:
             --set-env-vars "VERTEX_AI_LOCATION=${{ env.REGION }}" \
             --set-env-vars "VERTEX_AI_MODEL=gemini-2.5-flash" \
             --set-env-vars "FRONTEND_URL=${{ secrets.FRONTEND_URL }}" \
-            --set-env-vars "BATCH_API_BASE_URL=${{ secrets.BATCH_API_BASE_URL }}" \
-            --set-env-vars "TWITTER_API_KEY=${{ secrets.TWITTER_API_KEY }}" \
-            --set-env-vars "TWITTER_API_SECRET=${{ secrets.TWITTER_API_SECRET }}" \
-            --set-env-vars "TWITTER_ACCESS_TOKEN=${{ secrets.TWITTER_ACCESS_TOKEN }}" \
-            --set-env-vars "TWITTER_ACCESS_SECRET=${{ secrets.TWITTER_ACCESS_SECRET }}" \
             --set-env-vars "NODE_ENV=production" \
             --set-env-vars "DB_SOCKET_PATH=/cloudsql/${{ secrets.CLOUD_SQL_INSTANCE }}" \
             --set-env-vars "DB_HOST=localhost" \
@@ -163,12 +159,40 @@ jobs:
         env:
           CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE: ${{ steps.auth.outputs.credentials_file_path }}
 
+      - name: Deploy batch service to Cloud Run
+        run: |
+          gcloud run deploy ${{ env.BATCH_SERVICE_NAME }} \
+            --image ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}:${{ github.sha }} \
+            --platform managed \
+            --region ${{ env.REGION }} \
+            --service-account ${{ secrets.GCP_SERVICE_ACCOUNT }} \
+            --allow-unauthenticated \
+            --port 8080 \
+            --set-env-vars "NODE_ENV=production" \
+            --set-env-vars "APP_ENTRY=dist/src/batch-main.js" \
+            --set-env-vars "QUIZ_API_BASE_URL=${{ secrets.QUIZ_API_BASE_URL }}" \
+            --set-env-vars "TWITTER_API_KEY=${{ secrets.TWITTER_API_KEY }}" \
+            --set-env-vars "TWITTER_API_SECRET=${{ secrets.TWITTER_API_SECRET }}" \
+            --set-env-vars "TWITTER_ACCESS_TOKEN=${{ secrets.TWITTER_ACCESS_TOKEN }}" \
+            --set-env-vars "TWITTER_ACCESS_SECRET=${{ secrets.TWITTER_ACCESS_SECRET }}"
+        env:
+          CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE: ${{ steps.auth.outputs.credentials_file_path }}
+
       # ------------------------------------
       # Cloud Run 環境変数を確認（名前のみ表示）
       # ------------------------------------
-      - name: Verify Cloud Run environment variables
+      - name: Verify API service environment variables
         run: |
-          gcloud run services describe ${{ env.SERVICE_NAME }} \
+          gcloud run services describe ${{ env.API_SERVICE_NAME }} \
+            --platform managed \
+            --region ${{ env.REGION }} \
+            --format="table(spec.template.spec.containers[0].env[].name)"
+        env:
+          CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE: ${{ steps.auth.outputs.credentials_file_path }}
+
+      - name: Verify batch service environment variables
+        run: |
+          gcloud run services describe ${{ env.BATCH_SERVICE_NAME }} \
             --platform managed \
             --region ${{ env.REGION }} \
             --format="table(spec.template.spec.containers[0].env[].name)"
