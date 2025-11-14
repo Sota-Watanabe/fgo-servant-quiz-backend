@@ -111,7 +111,7 @@ const baseStyles = `
     box-shadow: 0 25px 50px rgba(15, 23, 42, 0.12);
   }
   .question-title {
-    font-size: 28px;
+    font-size: 32px;
     font-weight: 800;
     margin: 0 0 24px;
     text-align: center;
@@ -143,14 +143,14 @@ const baseStyles = `
     text-transform: uppercase;
   }
   .np-name {
-    font-size: 36px;
+    font-size: 44px;
     font-weight: 800;
     margin: 0;
     color: #0f172a;
     text-align: center;
   }
   .np-ruby {
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 600;
     color: #0ea5e9;
     margin: 0;
@@ -171,13 +171,13 @@ const baseStyles = `
   .meta-label {
     margin: 0;
     text-transform: uppercase;
-    font-size: 11px;
+    font-size: 12px;
     letter-spacing: 0.25em;
     color: #64748b;
   }
   .meta-value {
     margin: 8px 0 0;
-    font-size: 22px;
+    font-size: 26px;
     font-weight: 700;
     color: #0f172a;
   }
@@ -189,7 +189,7 @@ const baseStyles = `
     background: rgba(14, 165, 233, 0.08);
     color: #0f172a;
     line-height: 1.6;
-    font-size: 15px;
+    font-size: 18px;
   }
   .np-detail--muted {
     color: #475569;

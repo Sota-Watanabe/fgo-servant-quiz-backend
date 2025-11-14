@@ -105,6 +105,23 @@ See `API_DOCS.md` for endpoint summaries and usage notes.
 
 `jest --passWithNoTests` is enabled, so empty suites will not fail CI while you expand coverage.
 
+## Tweet Image Preview
+
+Use the bundled preview helper to render the batch tweet templates without calling the actual quiz API or Twitter:
+
+```bash
+npm run preview:tweet -- --endpoint=/quiz/np
+```
+
+- Screenshots/HTML snapshots are written to `data/post-tweet-preview-*.{png,html}`.
+- Pass a custom payload captured from `/quiz/*` if you need to preview real responses:
+
+  ```bash
+  npm run preview:tweet -- --endpoint=/quiz/np --payload=./payloads/np.json
+  ```
+
+  The JSON should match the response shape of the selected endpoint (`ServantNpGetResponseDto`, etc.).
+
 ## Deployment
 
 - The repository is configured for Google Cloud Run with a multi-stage Docker build (`Dockerfile`).
