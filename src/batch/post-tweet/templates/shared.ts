@@ -112,7 +112,7 @@ const baseStyles = `
   }
   .question-title {
     font-size: 32px;
-    font-weight: 800;
+    font-weight: 600;
     margin: 0 0 24px;
     text-align: center;
     color: #0f172a;
@@ -144,13 +144,13 @@ const baseStyles = `
   }
   .np-name {
     font-size: 44px;
-    font-weight: 800;
+    font-weight: 600;
     margin: 0;
     color: #0f172a;
     text-align: center;
   }
   .np-ruby {
-    font-size: 18px;
+    font-size: 30px;
     font-weight: 600;
     color: #0ea5e9;
     margin: 0;
@@ -171,14 +171,14 @@ const baseStyles = `
   .meta-label {
     margin: 0;
     text-transform: uppercase;
-    font-size: 12px;
+    font-size: 16px;
     letter-spacing: 0.25em;
     color: #64748b;
   }
   .meta-value {
     margin: 8px 0 0;
     font-size: 26px;
-    font-weight: 700;
+    font-weight: 600;
     color: #0f172a;
   }
   .np-detail {
@@ -189,7 +189,7 @@ const baseStyles = `
     background: rgba(14, 165, 233, 0.08);
     color: #0f172a;
     line-height: 1.6;
-    font-size: 18px;
+    font-size: 22px;
   }
   .np-detail--muted {
     color: #475569;
@@ -341,19 +341,19 @@ const baseStyles = `
   }
   .skill-name {
     margin: 0;
-    font-size: 20px;
-    font-weight: 800;
+    font-size: 26px;
+    font-weight: 600;
     color: #1d4ed8;
   }
   .skill-ruby {
     margin-left: 8px;
-    font-size: 12px;
+    font-size: 20px;
     font-weight: 600;
     color: #2563eb;
   }
   .skill-detail {
     margin: 12px 0 0;
-    font-size: 14px;
+    font-size: 20px;
     line-height: 1.6;
     color: #0f172a;
   }
