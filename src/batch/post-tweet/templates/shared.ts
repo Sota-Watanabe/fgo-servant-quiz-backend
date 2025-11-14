@@ -262,27 +262,9 @@ const baseStyles = `
     flex-direction: column;
     gap: 12px;
   }
-  .profile-label {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 14px;
-    font-weight: 600;
-    color: #0369a1;
-  }
-  .profile-cond-pill {
-    display: inline-flex;
-    align-items: center;
-    border-radius: 999px;
-    background: rgba(14, 165, 233, 0.18);
-    color: #0f172a;
-    padding: 4px 12px;
-    font-size: 11px;
-    letter-spacing: 0.08em;
-  }
   .profile-text {
     margin: 0;
-    font-size: 15px;
+    font-size: 20px;
     line-height: 1.7;
     color: #0f172a;
   }
