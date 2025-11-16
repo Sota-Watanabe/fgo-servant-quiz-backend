@@ -44,11 +44,6 @@ export class GetQuizProfileInteractor {
         );
 
         if (quizResult?.maskedProfile) {
-          console.log('---- Quiz Profile Cache Hit ----');
-          console.log('servantId:', targetServant.id);
-          console.log('maskedProfile:', quizResult.maskedProfile);
-          console.log('--------------------\n');
-
           return new ServantProfileGetResponseDto(
             servantDetail,
             quizResult.maskedProfile,
@@ -69,12 +64,6 @@ export class GetQuizProfileInteractor {
           },
           manager,
         );
-
-        console.log('---- Quiz Profile Generation ----');
-        console.log('servantDetail.name:', servantDetail.name);
-        console.log('rawProfile:', rawProfile);
-        console.log('--------------------\n');
-        console.log('maskedProfile:', maskedProfile);
 
         return new ServantProfileGetResponseDto(servantDetail, maskedProfile);
       },
