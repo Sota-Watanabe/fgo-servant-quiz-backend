@@ -2,7 +2,7 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { lastValueFrom } from 'rxjs';
-import puppeteer from 'puppeteer';
+import puppeteer, { ScreenshotOptions } from 'puppeteer';
 import { buildHtml } from '@/batch/post-tweet/post-tweet-html.builder';
 import {
   QUIZ_CARD_ENDPOINT_MAP,
@@ -16,6 +16,14 @@ export type QuizCardResult = {
   image: Buffer;
 };
 
+export type QuizCardImageOptions = {
+  width?: number;
+  height?: number;
+};
+
+const DEFAULT_VIEWPORT_WIDTH = 900;
+const DEFAULT_VIEWPORT_HEIGHT = 900;
+
 @Injectable()
 export class QuizCardService {
   constructor(
@@ -26,11 +34,12 @@ export class QuizCardService {
   async generateQuizCard(
     type: QuizCardType,
     servantId?: number,
+    imageOptions?: QuizCardImageOptions,
   ): Promise<QuizCardResult> {
     const endpoint = QUIZ_CARD_ENDPOINT_MAP[type];
     const payload = await this.fetchQuizPayload(endpoint, servantId);
     const html = buildHtml(endpoint, payload);
-    const image = await this.renderHtmlToImage(html);
+    const image = await this.renderHtmlToImage(html, imageOptions);
 
     return {
       endpoint,
@@ -52,7 +61,14 @@ export class QuizCardService {
     return response.data;
   }
 
-  private async renderHtmlToImage(html: string): Promise<Buffer> {
+  private async renderHtmlToImage(
+    html: string,
+    imageOptions?: QuizCardImageOptions,
+  ): Promise<Buffer> {
+    const targetWidth = imageOptions?.width;
+    const targetHeight = imageOptions?.height;
+    const viewportWidth = targetWidth ?? DEFAULT_VIEWPORT_WIDTH;
+    const viewportHeight = targetHeight ?? DEFAULT_VIEWPORT_HEIGHT;
     const browser = await puppeteer.launch({
       headless: true,
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
@@ -61,9 +77,27 @@ export class QuizCardService {
 
     try {
       const page = await browser.newPage();
-      await page.setViewport({ width: 900, height: 900, deviceScaleFactor: 2 });
+      await page.setViewport({
+        width: viewportWidth,
+        height: viewportHeight,
+        deviceScaleFactor: 2,
+      });
       await page.setContent(html, { waitUntil: 'networkidle0' });
-      return (await page.screenshot({ type: 'png', fullPage: true })) as Buffer;
+      let screenshotOptions: ScreenshotOptions;
+      if (targetWidth !== undefined && targetHeight !== undefined) {
+        screenshotOptions = {
+          type: 'png',
+          clip: {
+            x: 0,
+            y: 0,
+            width: targetWidth,
+            height: targetHeight,
+          },
+        };
+      } else {
+        screenshotOptions = { type: 'png', fullPage: true };
+      }
+      return (await page.screenshot(screenshotOptions)) as Buffer;
     } finally {
       await browser.close();
     }

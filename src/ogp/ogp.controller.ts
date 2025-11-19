@@ -14,6 +14,9 @@ import {
 } from '@/quiz/quiz-card.constants';
 import { QuizCardService } from '@/services/quiz-card.service';
 
+const DEFAULT_OGP_WIDTH = 1200;
+const DEFAULT_OGP_HEIGHT = 630;
+
 @ApiTags('ogp')
 @Controller()
 export class OgpController {
@@ -37,6 +40,18 @@ export class OgpController {
     type: Number,
     description: '指定すると該当サーヴァントのデータで生成します',
   })
+  @ApiQuery({
+    name: 'width',
+    required: false,
+    type: Number,
+    description: `OGP画像の横幅(px)。デフォルト: ${DEFAULT_OGP_WIDTH}`,
+  })
+  @ApiQuery({
+    name: 'height',
+    required: false,
+    type: Number,
+    description: `OGP画像の縦幅(px)。デフォルト: ${DEFAULT_OGP_HEIGHT}`,
+  })
   @ApiResponse({
     status: 200,
     description: 'PNG 画像バイナリ',
@@ -47,12 +62,24 @@ export class OgpController {
   async getOgpImage(
     @Query('type') type: string,
     @Query('servantId') servantId?: string,
+    @Query('width') width?: string,
+    @Query('height') height?: string,
   ): Promise<StreamableFile> {
     const quizType = this.parseQuizType(type);
     const parsedServantId = this.parseServantId(servantId);
+    const parsedWidth = this.parseDimension(width, 'width', DEFAULT_OGP_WIDTH);
+    const parsedHeight = this.parseDimension(
+      height,
+      'height',
+      DEFAULT_OGP_HEIGHT,
+    );
     const { image } = await this.quizCardService.generateQuizCard(
       quizType,
       parsedServantId,
+      {
+        width: parsedWidth,
+        height: parsedHeight,
+      },
     );
 
     return new StreamableFile(image, {
@@ -79,6 +106,23 @@ export class OgpController {
     const parsed = Number(servantId);
     if (Number.isNaN(parsed)) {
       throw new BadRequestException('servantId must be a number');
+    }
+
+    return parsed;
+  }
+
+  private parseDimension(
+    value: string | undefined,
+    fieldName: string,
+    fallback: number,
+  ): number {
+    if (value === undefined || value === '') {
+      return fallback;
+    }
+
+    const parsed = Number(value);
+    if (!Number.isInteger(parsed) || parsed <= 0) {
+      throw new BadRequestException(`${fieldName} must be a positive integer`);
     }
 
     return parsed;
