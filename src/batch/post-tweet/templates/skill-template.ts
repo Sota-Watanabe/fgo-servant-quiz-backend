@@ -82,9 +82,9 @@ export const buildSkillHtml = (payload: unknown): string => {
 
   const skillsHtml = normalizedSkills
     .map(
-      (skill, index) => `<article class="skill-item">
+      (skill) => `<article class="skill-item">
         <h3 class="skill-name">
-          スキル${index + 1}: ${escapeHtml(skill.name || '名称未設定')}${
+          ${escapeHtml(skill.name || '名称未設定')}${
             skill.ruby
               ? `<span class="skill-ruby">(${escapeHtml(skill.ruby)})</span>`
               : ''

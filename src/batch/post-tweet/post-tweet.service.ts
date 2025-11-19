@@ -6,19 +6,27 @@ import { lastValueFrom } from 'rxjs';
 import puppeteer from 'puppeteer';
 import { buildHtml } from '@/batch/post-tweet/post-tweet-html.builder';
 
+export const POST_TWEET_TYPES = ['skill', 'profile', 'np'] as const;
+export type PostTweetType = (typeof POST_TWEET_TYPES)[number];
+
 @Injectable()
 export class PostTweetService {
   private readonly logger = new Logger(PostTweetService.name);
-  private readonly quizEndpoints = ['/quiz/skill', '/quiz/profile', '/quiz/np'];
+  private readonly quizEndpointMap: Record<PostTweetType, string> = {
+    skill: '/quiz/skill',
+    profile: '/quiz/profile',
+    np: '/quiz/np',
+  };
+  private readonly quizEndpoints = Object.values(this.quizEndpointMap);
 
   constructor(
     private readonly httpService: HttpService,
     private readonly configService: ConfigService,
   ) {}
 
-  async postDailyTweet(): Promise<{ status: 'ok' }> {
+  async postDailyTweet(type?: PostTweetType): Promise<{ status: 'ok' }> {
     try {
-      const endpoint = this.pickEndpoint();
+      const endpoint = this.pickEndpoint(type);
       const payload = await this.fetchQuizPayload(endpoint);
       const html = buildHtml(endpoint, payload);
       const image = await this.renderHtmlToImage(html);
@@ -40,7 +48,11 @@ export class PostTweetService {
     }
   }
 
-  private pickEndpoint(): string {
+  private pickEndpoint(type?: PostTweetType): string {
+    if (type) {
+      return this.quizEndpointMap[type];
+    }
+
     const index = Math.floor(Math.random() * this.quizEndpoints.length);
     return this.quizEndpoints[index];
   }
