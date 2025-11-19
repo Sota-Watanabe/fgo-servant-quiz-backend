@@ -2,7 +2,8 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { lastValueFrom } from 'rxjs';
-import puppeteer, { ScreenshotOptions } from 'puppeteer';
+import puppeteer from 'puppeteer';
+import sharp from 'sharp';
 import { buildHtml } from '@/batch/post-tweet/post-tweet-html.builder';
 import {
   QUIZ_CARD_ENDPOINT_MAP,
@@ -23,6 +24,7 @@ export type QuizCardImageOptions = {
 
 const DEFAULT_VIEWPORT_WIDTH = 900;
 const DEFAULT_VIEWPORT_HEIGHT = 900;
+const RESIZE_BACKGROUND = { r: 15, g: 23, b: 42, alpha: 1 };
 
 @Injectable()
 export class QuizCardService {
@@ -83,24 +85,39 @@ export class QuizCardService {
         deviceScaleFactor: 2,
       });
       await page.setContent(html, { waitUntil: 'networkidle0' });
-      let screenshotOptions: ScreenshotOptions;
-      if (targetWidth !== undefined && targetHeight !== undefined) {
-        screenshotOptions = {
-          type: 'png',
-          clip: {
-            x: 0,
-            y: 0,
-            width: targetWidth,
-            height: targetHeight,
-          },
-        };
-      } else {
-        screenshotOptions = { type: 'png', fullPage: true };
-      }
-      return (await page.screenshot(screenshotOptions)) as Buffer;
+      const screenshot = (await page.screenshot({
+        type: 'png',
+        fullPage: true,
+      })) as Buffer;
+      return this.resizeImageIfNeeded(screenshot, targetWidth, targetHeight);
     } finally {
       await browser.close();
     }
+  }
+
+  private async resizeImageIfNeeded(
+    image: Buffer,
+    width?: number,
+    height?: number,
+  ): Promise<Buffer> {
+    if (!width && !height) {
+      return image;
+    }
+
+    if (width && height) {
+      return sharp(image)
+        .resize(width, height, {
+          fit: 'contain',
+          background: RESIZE_BACKGROUND,
+        })
+        .png()
+        .toBuffer();
+    }
+
+    return sharp(image)
+      .resize(width ?? null, height ?? null)
+      .png()
+      .toBuffer();
   }
 
   private resolveQuizApiBaseUrl(): string {
