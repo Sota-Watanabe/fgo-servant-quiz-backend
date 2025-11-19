@@ -1,10 +1,11 @@
 import { BadRequestException, Controller, Post, Query } from '@nestjs/common';
 import { ApiQuery, ApiTags } from '@nestjs/swagger';
+import { PostTweetService } from './post-tweet.service';
 import {
-  PostTweetService,
-  PostTweetType,
-  POST_TWEET_TYPES,
-} from './post-tweet.service';
+  QUIZ_CARD_TYPES,
+  QuizCardType,
+  normalizeQuizCardType,
+} from '@/quiz/quiz-card.constants';
 
 @ApiTags('batch')
 @Controller('batch/post-tweet')
@@ -15,7 +16,7 @@ export class PostTweetController {
   @ApiQuery({
     name: 'type',
     required: false,
-    enum: POST_TWEET_TYPES,
+    enum: QUIZ_CARD_TYPES,
     description: 'np | skill | profile を指定するとそのタイプのツイートを投稿',
   })
   async postDailyTweet(@Query('type') type?: string) {
@@ -23,18 +24,18 @@ export class PostTweetController {
     return this.postTweetService.postDailyTweet(quizType);
   }
 
-  private parseQuizType(type?: string): PostTweetType | undefined {
+  private parseQuizType(type?: string): QuizCardType | undefined {
     if (!type) {
       return undefined;
     }
 
-    const normalized = type.trim().toLowerCase();
-    if ((POST_TWEET_TYPES as readonly string[]).includes(normalized)) {
-      return normalized as PostTweetType;
+    const normalized = normalizeQuizCardType(type);
+    if (normalized) {
+      return normalized;
     }
 
     throw new BadRequestException(
-      `Query parameter "type" must be one of: ${POST_TWEET_TYPES.join(', ')}`,
+      `Query parameter "type" must be one of: ${QUIZ_CARD_TYPES.join(', ')}`,
     );
   }
 }

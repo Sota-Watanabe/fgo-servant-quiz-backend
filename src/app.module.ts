@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { HttpModule } from '@nestjs/axios';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -17,16 +18,24 @@ import { GetQuizNpInteractor } from '@/interactors/get-quiz-np.interactor';
 import { DatabaseModule } from '@/database/database.module';
 import { RepositoriesModule } from '@/repositories/repositories.module';
 import { VertexAiApiService } from '@/services/vertex-ai-api.service';
+import { OgpController } from '@/ogp/ogp.controller';
+import { QuizCardService } from '@/services/quiz-card.service';
 
 @Module({
   imports: [
+    HttpModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),
     DatabaseModule,
     RepositoriesModule,
   ],
-  controllers: [AppController, QuizController, ServantsController],
+  controllers: [
+    AppController,
+    QuizController,
+    ServantsController,
+    OgpController,
+  ],
   providers: [
     AppService,
     ServantsService,
@@ -36,6 +45,7 @@ import { VertexAiApiService } from '@/services/vertex-ai-api.service';
     AtlasAcademyGateway,
     VertexAiGateway,
     VertexAiApiService,
+    QuizCardService,
     // Interactors
     GetServantOptionsInteractor,
     GetQuizSkillInteractor,

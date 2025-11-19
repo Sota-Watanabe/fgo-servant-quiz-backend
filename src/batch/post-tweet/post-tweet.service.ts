@@ -1,35 +1,23 @@
-import { HttpService } from '@nestjs/axios';
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TwitterApi } from 'twitter-api-v2';
-import { lastValueFrom } from 'rxjs';
-import puppeteer from 'puppeteer';
-import { buildHtml } from '@/batch/post-tweet/post-tweet-html.builder';
-
-export const POST_TWEET_TYPES = ['skill', 'profile', 'np'] as const;
-export type PostTweetType = (typeof POST_TWEET_TYPES)[number];
+import { QUIZ_CARD_TYPES, QuizCardType } from '@/quiz/quiz-card.constants';
+import { QuizCardService } from '@/services/quiz-card.service';
 
 @Injectable()
 export class PostTweetService {
   private readonly logger = new Logger(PostTweetService.name);
-  private readonly quizEndpointMap: Record<PostTweetType, string> = {
-    skill: '/quiz/skill',
-    profile: '/quiz/profile',
-    np: '/quiz/np',
-  };
-  private readonly quizEndpoints = Object.values(this.quizEndpointMap);
 
   constructor(
-    private readonly httpService: HttpService,
     private readonly configService: ConfigService,
+    private readonly quizCardService: QuizCardService,
   ) {}
 
-  async postDailyTweet(type?: PostTweetType): Promise<{ status: 'ok' }> {
+  async postDailyTweet(type?: QuizCardType): Promise<{ status: 'ok' }> {
     try {
-      const endpoint = this.pickEndpoint(type);
-      const payload = await this.fetchQuizPayload(endpoint);
-      const html = buildHtml(endpoint, payload);
-      const image = await this.renderHtmlToImage(html);
+      const quizType = this.pickQuizType(type);
+      const { endpoint, payload, image } =
+        await this.quizCardService.generateQuizCard(quizType);
       const answerUrl = this.buildAnswerUrl(endpoint, payload);
       await this.tweetImage(endpoint, image, answerUrl);
 
@@ -48,51 +36,13 @@ export class PostTweetService {
     }
   }
 
-  private pickEndpoint(type?: PostTweetType): string {
+  private pickQuizType(type?: QuizCardType): QuizCardType {
     if (type) {
-      return this.quizEndpointMap[type];
+      return type;
     }
 
-    const index = Math.floor(Math.random() * this.quizEndpoints.length);
-    return this.quizEndpoints[index];
-  }
-
-  private async fetchQuizPayload(endpoint: string): Promise<unknown> {
-    const baseUrl = this.resolveQuizApiBaseUrl();
-    const url = `${baseUrl.replace(/\/$/, '')}${endpoint}`;
-    const response = await lastValueFrom(this.httpService.get(url));
-    return response.data;
-  }
-
-  private async renderHtmlToImage(html: string): Promise<Buffer> {
-    const browser = await puppeteer.launch({
-      headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
-      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
-    });
-
-    try {
-      const page = await browser.newPage();
-      await page.setViewport({ width: 900, height: 900, deviceScaleFactor: 2 });
-      await page.setContent(html, { waitUntil: 'networkidle0' });
-      return (await page.screenshot({ type: 'png', fullPage: true })) as Buffer;
-    } finally {
-      await browser.close();
-    }
-  }
-
-  private resolveQuizApiBaseUrl(): string {
-    const configured = this.configService.get<string>('QUIZ_API_BASE_URL');
-    if (configured && configured.trim().length > 0) {
-      return configured.trim();
-    }
-
-    const parsedPort = parseInt(
-      this.configService.get<string>('PORT') ?? '',
-      10,
-    );
-    const port = Number.isNaN(parsedPort) ? 8888 : parsedPort;
-    return `http://localhost:${port}`;
+    const index = Math.floor(Math.random() * QUIZ_CARD_TYPES.length);
+    return QUIZ_CARD_TYPES[index];
   }
 
   private async tweetImage(
@@ -118,6 +68,7 @@ export class PostTweetService {
       '🧩 FGO サーヴァント当てクイズ',
       `答えはこちら → ${answerUrl}`,
       '#FGO',
+      '#FateGrandQuiz',
     ];
 
     return lines.join('\n');

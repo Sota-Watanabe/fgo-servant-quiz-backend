@@ -37,6 +37,7 @@ export class DumpService {
    */
   async getServantById(servantId: number): Promise<ServantDto | undefined> {
     const servants = await this.getDumpServants();
+    console.log('servantId', servantId);
     return servants.find((servant) => servant.id === servantId);
   }
 }
