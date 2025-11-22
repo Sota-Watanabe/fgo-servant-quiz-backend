@@ -23,7 +23,7 @@ export class OgpController {
   constructor(private readonly quizCardService: QuizCardService) {}
 
   @Get('ogp')
-  @Header('Cache-Control', 'public, max-age=300')
+  @Header('Cache-Control', 'public, max-age=3600')
   @ApiOperation({
     summary: 'OGP向けクイズ画像の生成',
     description: 'type と servantId を指定してクイズ画像(PNG)を返します',
