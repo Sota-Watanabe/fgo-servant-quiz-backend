@@ -3,9 +3,10 @@ import {
   Controller,
   Get,
   Header,
-  Query,
+  Req,
   StreamableFile,
 } from '@nestjs/common';
+import type { Request } from 'express';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import {
   QUIZ_CARD_TYPES,
@@ -59,12 +60,15 @@ export class OgpController {
       'image/png': {},
     },
   })
-  async getOgpImage(
-    @Query('type') type: string,
-    @Query('servantId') servantId?: string,
-    @Query('width') width?: string,
-    @Query('height') height?: string,
-  ): Promise<StreamableFile> {
+  async getOgpImage(@Req() req: Request): Promise<StreamableFile> {
+    // 生の URL からクエリ文字列を取得し、&amp; を & に正規化
+    const normalizedParams = this.normalizeQueryParams(req.url);
+
+    const type = normalizedParams.get('type') || '';
+    const servantId = normalizedParams.get('servantId') || undefined;
+    const width = normalizedParams.get('width') || undefined;
+    const height = normalizedParams.get('height') || undefined;
+
     const quizType = this.parseQuizType(type);
     const parsedServantId = this.parseServantId(servantId);
     const parsedWidth = this.parseDimension(width, 'width', DEFAULT_OGP_WIDTH);
@@ -85,6 +89,22 @@ export class OgpController {
     return new StreamableFile(image, {
       type: 'image/png',
     });
+  }
+
+  /**
+   * 生の URL からクエリ文字列を取得し、&amp; を & に正規化してパースする
+   * SNS（X/Twitter, Facebook等）が OGP URL を取得する際に & が &amp; にエスケープされる問題に対応
+   */
+  private normalizeQueryParams(url: string): URLSearchParams {
+    const queryStart = url.indexOf('?');
+    if (queryStart === -1) {
+      return new URLSearchParams();
+    }
+
+    const rawQueryString = url.substring(queryStart + 1);
+    const normalizedQueryString = rawQueryString.replace(/&amp;/g, '&');
+
+    return new URLSearchParams(normalizedQueryString);
   }
 
   private parseQuizType(type?: string): QuizCardType {
