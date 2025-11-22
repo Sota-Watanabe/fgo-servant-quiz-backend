@@ -14,43 +14,34 @@ export class CorsMiddleware implements NestMiddleware {
 
   use(req: Request, res: Response, next: NextFunction): void {
     // OGPエンドポイントは Cloud CDN でのキャッシュを安定させるため、
-    // CORS を固定値として返し、動的な Origin 判定を行わない
+    // CORS ヘッダーを一切付与しない（credentials=true があるとキャッシュされない）
     if (req.url.startsWith('/ogp')) {
-      // 既存のCORS関連ヘッダーをクリア（念のため）
-      res.removeHeader('Access-Control-Allow-Origin');
-      res.removeHeader('Access-Control-Allow-Credentials');
-      res.removeHeader('Access-Control-Allow-Methods');
-      res.removeHeader('Access-Control-Allow-Headers');
-      res.removeHeader('Vary');
+      // setHeaderをオーバーライドしてCORS関連ヘッダーの設定を防ぐ
+      const originalSetHeader = res.setHeader.bind(res) as typeof res.setHeader;
+      res.setHeader = function (
+        this: Response,
+        name: string,
+        value: string | number | readonly string[],
+      ): Response {
+        const lowerName = name.toLowerCase();
+        if (
+          lowerName === 'access-control-allow-origin' ||
+          lowerName === 'access-control-allow-credentials' ||
+          lowerName === 'access-control-allow-methods' ||
+          lowerName === 'access-control-allow-headers' ||
+          lowerName === 'vary'
+        ) {
+          // CORSヘッダーは設定しない
+          return this;
+        }
+        return originalSetHeader.call(this, name, value) as Response;
+      };
 
       next();
       return;
     }
 
-    // それ以外のエンドポイントはCORS処理を実行
-    const origin = req.headers.origin;
-    if (
-      !origin ||
-      (typeof origin === 'string' && this.allowedOrigins.includes(origin))
-    ) {
-      res.setHeader('Access-Control-Allow-Origin', origin || '*');
-      res.setHeader(
-        'Access-Control-Allow-Methods',
-        'GET,HEAD,PUT,PATCH,POST,DELETE',
-      );
-      res.setHeader('Access-Control-Allow-Credentials', 'true');
-
-      // プリフライトリクエストの場合
-      if (req.method === 'OPTIONS') {
-        res.setHeader(
-          'Access-Control-Allow-Headers',
-          'Content-Type, Authorization',
-        );
-        res.sendStatus(204);
-        return;
-      }
-    }
-
+    // それ以外のエンドポイントはスキップ（main.ts の enableCors で処理）
     next();
   }
 }

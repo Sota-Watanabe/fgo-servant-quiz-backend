@@ -16,7 +16,28 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  // CORSはCorsMiddlewareで処理（OGPエンドポイントを除く）
+  // /ogp エンドポイントを除外したCORS設定
+  // Cloud CDN がキャッシュするため、/ogp には CORS ヘッダーを一切付与しない
+  app.enableCors({
+    origin: (
+      origin: string | undefined,
+      callback: (err: Error | null, allow?: boolean) => void,
+    ) => {
+      const allowedOrigins =
+        process.env.NODE_ENV === 'production'
+          ? [process.env.FRONTEND_URL || 'https://your-frontend-domain.com']
+          : ['http://localhost:3000', 'http://192.168.10.112'];
+
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(null, false);
+      }
+    },
+    credentials: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    allowedHeaders: 'Content-Type, Authorization',
+  });
 
   // Cloud RunのPORT環境変数を数値として解釈し、無効値はデフォルトの8888を使用
   const parsedPort = parseInt(process.env.PORT ?? '', 10);
