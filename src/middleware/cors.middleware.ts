@@ -17,13 +17,11 @@ export class CorsMiddleware implements NestMiddleware {
     // CORS を固定値として返し、動的な Origin 判定を行わない
     if (req.url.startsWith('/ogp')) {
       // 既存のCORS関連ヘッダーをクリア（念のため）
+      res.removeHeader('Access-Control-Allow-Origin');
       res.removeHeader('Access-Control-Allow-Credentials');
       res.removeHeader('Access-Control-Allow-Methods');
       res.removeHeader('Access-Control-Allow-Headers');
       res.removeHeader('Vary');
-
-      // OGP画像はブラウザJSから参照しないためワイルドカードで固定
-      res.setHeader('Access-Control-Allow-Origin', '*');
 
       next();
       return;
