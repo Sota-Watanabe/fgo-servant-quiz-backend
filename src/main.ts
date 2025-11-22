@@ -16,37 +16,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  // CORSをルートごとに設定
-  const allowedOrigins =
-    process.env.NODE_ENV === 'production'
-      ? [process.env.FRONTEND_URL || 'https://your-frontend-domain.com']
-      : ['http://localhost:3000', 'http://192.168.10.112'];
-
-  // OGP以外のエンドポイントはCORS有効（credentials: true）
-  // OGPエンドポイント（/ogp）はCORSヘッダーなし（画像を返すだけなので不要）
-  app.enableCors({
-    origin: (
-      origin: string | undefined,
-      callback: (err: Error | null, allow?: boolean) => void,
-    ) => {
-      // originがallowedOriginsに含まれるかチェック
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(null, false);
-      }
-    },
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: (
-      req: { url?: string },
-      callback: (err: Error | null, allow?: boolean) => void,
-    ) => {
-      // OGPエンドポイントではcredentials: falseにする
-      const isOgpEndpoint =
-        typeof req.url === 'string' && req.url.startsWith('/ogp');
-      callback(null, !isOgpEndpoint);
-    },
-  });
+  // CORSはCorsMiddlewareで処理（OGPエンドポイントを除く）
 
   // Cloud RunのPORT環境変数を数値として解釈し、無効値はデフォルトの8888を使用
   const parsedPort = parseInt(process.env.PORT ?? '', 10);

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { HttpModule } from '@nestjs/axios';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
@@ -20,6 +20,7 @@ import { RepositoriesModule } from '@/repositories/repositories.module';
 import { VertexAiApiService } from '@/services/vertex-ai-api.service';
 import { OgpController } from '@/ogp/ogp.controller';
 import { QuizCardService } from '@/services/quiz-card.service';
+import { CorsMiddleware } from '@/middleware/cors.middleware';
 
 @Module({
   imports: [
@@ -51,6 +52,11 @@ import { QuizCardService } from '@/services/quiz-card.service';
     GetQuizSkillInteractor,
     GetQuizProfileInteractor,
     GetQuizNpInteractor,
+    CorsMiddleware,
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer): void {
+    consumer.apply(CorsMiddleware).forRoutes('*');
+  }
+}
