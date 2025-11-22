@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import { Request, Response } from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -18,25 +19,43 @@ async function bootstrap() {
 
   // /ogp エンドポイントを除外したCORS設定
   // Cloud CDN がキャッシュするため、/ogp には CORS ヘッダーを一切付与しない
-  app.enableCors({
-    origin: (
-      origin: string | undefined,
-      callback: (err: Error | null, allow?: boolean) => void,
-    ) => {
-      const allowedOrigins =
-        process.env.NODE_ENV === 'production'
-          ? [process.env.FRONTEND_URL || 'https://your-frontend-domain.com']
-          : ['http://localhost:3000', 'http://192.168.10.112'];
+  app.use((req: Request, res: Response, next: () => void) => {
+    // /ogp エンドポイントは CORS 処理をスキップ
+    if (req.url.startsWith('/ogp')) {
+      return next();
+    }
 
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(null, false);
+    // それ以外のエンドポイントは CORS を適用
+    const origin = req.headers.origin;
+    const allowedOrigins =
+      process.env.NODE_ENV === 'production'
+        ? [process.env.FRONTEND_URL || 'https://your-frontend-domain.com']
+        : ['http://localhost:3000', 'http://192.168.10.112'];
+
+    if (
+      !origin ||
+      (typeof origin === 'string' && allowedOrigins.includes(origin))
+    ) {
+      res.setHeader('Access-Control-Allow-Origin', origin || '*');
+      res.setHeader('Access-Control-Allow-Credentials', 'true');
+      res.setHeader(
+        'Access-Control-Allow-Methods',
+        'GET,HEAD,PUT,PATCH,POST,DELETE',
+      );
+      res.setHeader('Vary', 'Origin');
+
+      // プリフライトリクエスト
+      if (req.method === 'OPTIONS') {
+        res.setHeader(
+          'Access-Control-Allow-Headers',
+          'Content-Type, Authorization',
+        );
+        res.sendStatus(204);
+        return;
       }
-    },
-    credentials: true,
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    allowedHeaders: 'Content-Type, Authorization',
+    }
+
+    next();
   });
 
   // Cloud RunのPORT環境変数を数値として解釈し、無効値はデフォルトの8888を使用
