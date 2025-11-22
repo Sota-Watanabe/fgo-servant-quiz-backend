@@ -17,11 +17,19 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
-  // /ogp エンドポイントを除外したCORS設定
-  // Cloud CDN がキャッシュするため、/ogp には CORS ヘッダーを一切付与しない
+  // /ogp エンドポイント向けCORS設定
+  // CDNキャッシュを保ったままフロントエンドからの事前フェッチを許可するため、'*' 固定で許容する
   app.use((req: Request, res: Response, next: () => void) => {
-    // /ogp エンドポイントは CORS 処理をスキップ
     if (req.url.startsWith('/ogp')) {
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS');
+
+      if (req.method === 'OPTIONS') {
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+        res.sendStatus(204);
+        return;
+      }
+
       return next();
     }
 
