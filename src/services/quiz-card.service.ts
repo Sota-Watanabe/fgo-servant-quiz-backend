@@ -1,8 +1,8 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable } from '@nestjs/common';
+import { Injectable, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { lastValueFrom } from 'rxjs';
-import puppeteer from 'puppeteer';
+import puppeteer, { Browser } from 'puppeteer';
 import sharp from 'sharp';
 import { buildHtml } from '@/batch/post-tweet/post-tweet-html.builder';
 import {
@@ -27,11 +27,56 @@ const DEFAULT_VIEWPORT_HEIGHT = 900;
 const RESIZE_BACKGROUND = { r: 15, g: 23, b: 42, alpha: 1 };
 
 @Injectable()
-export class QuizCardService {
+export class QuizCardService implements OnModuleDestroy {
+  private browser: Browser | null = null;
+  private browserPromise: Promise<Browser> | null = null;
+
   constructor(
     private readonly httpService: HttpService,
     private readonly configService: ConfigService,
   ) {}
+
+  async onModuleDestroy() {
+    if (this.browser) {
+      await this.browser.close();
+      this.browser = null;
+      this.browserPromise = null;
+    }
+  }
+
+  private async getBrowser(): Promise<Browser> {
+    if (this.browser && this.browser.connected) {
+      return this.browser;
+    }
+
+    // 複数の同時リクエストで重複起動を防ぐ
+    if (!this.browserPromise) {
+      this.browserPromise = puppeteer.launch({
+        headless: true,
+        args: [
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+          '--disable-dev-shm-usage', // メモリ使用量削減
+          '--disable-accelerated-2d-canvas',
+          '--no-first-run',
+          '--no-zygote',
+          '--single-process', // メモリ削減のためシングルプロセス化
+          '--disable-gpu',
+        ],
+        executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
+      });
+
+      this.browser = await this.browserPromise;
+      this.browserPromise = null;
+    } else {
+      await this.browserPromise;
+      if (this.browser) {
+        return this.browser;
+      }
+    }
+
+    return this.browser!;
+  }
 
   async generateQuizCard(
     type: QuizCardType,
@@ -71,14 +116,10 @@ export class QuizCardService {
     const targetHeight = imageOptions?.height;
     const viewportWidth = targetWidth ?? DEFAULT_VIEWPORT_WIDTH;
     const viewportHeight = targetHeight ?? DEFAULT_VIEWPORT_HEIGHT;
-    const browser = await puppeteer.launch({
-      headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
-      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH,
-    });
+    const browser = await this.getBrowser();
+    const page = await browser.newPage();
 
     try {
-      const page = await browser.newPage();
       await page.setViewport({
         width: viewportWidth,
         height: viewportHeight,
@@ -89,9 +130,16 @@ export class QuizCardService {
         type: 'png',
         fullPage: true,
       })) as Buffer;
-      return this.resizeImageIfNeeded(screenshot, targetWidth, targetHeight);
+
+      const resizedImage = await this.resizeImageIfNeeded(
+        screenshot,
+        targetWidth,
+        targetHeight,
+      );
+
+      return resizedImage;
     } finally {
-      await browser.close();
+      await page.close(); // ページを必ずクローズしてメモリを解放
     }
   }
 
