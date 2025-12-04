@@ -33,6 +33,9 @@ export class CloudTasksGateway {
   }
 
   isConfigured(): boolean {
+    this.logger.warn(
+      `Cloud Tasks not configured. Skipping task creation for ${this.client}/${this.projectId}/${this.serviceUrl}`,
+    );
     return this.client !== null && !!this.projectId && !!this.serviceUrl;
   }
 
