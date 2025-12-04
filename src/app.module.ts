@@ -18,8 +18,6 @@ import { GetQuizNpInteractor } from '@/interactors/get-quiz-np.interactor';
 import { DatabaseModule } from '@/database/database.module';
 import { RepositoriesModule } from '@/repositories/repositories.module';
 import { VertexAiApiService } from '@/services/vertex-ai-api.service';
-import { OgpController } from '@/ogp/ogp.controller';
-import { QuizCardService } from '@/services/quiz-card.service';
 
 @Module({
   imports: [
@@ -30,12 +28,7 @@ import { QuizCardService } from '@/services/quiz-card.service';
     DatabaseModule,
     RepositoriesModule,
   ],
-  controllers: [
-    AppController,
-    QuizController,
-    ServantsController,
-    OgpController,
-  ],
+  controllers: [AppController, QuizController, ServantsController],
   providers: [
     AppService,
     ServantsService,
@@ -45,7 +38,6 @@ import { QuizCardService } from '@/services/quiz-card.service';
     AtlasAcademyGateway,
     VertexAiGateway,
     VertexAiApiService,
-    QuizCardService,
     // Interactors
     GetServantOptionsInteractor,
     GetQuizSkillInteractor,
