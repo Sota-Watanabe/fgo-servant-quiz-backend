@@ -17,7 +17,7 @@ export class CreateOgpService {
     const { image, payload } = await this.quizCardService.generateQuizCard(
       type,
       servantId,
-      { width, height },
+      { width, height, isOgp: true },
     );
 
     // 画像をファイルとして保存

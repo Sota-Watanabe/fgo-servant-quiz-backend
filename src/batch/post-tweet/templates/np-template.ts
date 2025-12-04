@@ -1,4 +1,5 @@
 import {
+  TemplateRenderOptions,
   escapeHtml,
   formatMultiline,
   getString,
@@ -24,7 +25,10 @@ const formatCardLabel = (cardRaw: string): string => {
   return cardRaw;
 };
 
-export const buildNoblePhantasmHtml = (payload: unknown): string => {
+export const buildNoblePhantasmHtml = (
+  payload: unknown,
+  options: TemplateRenderOptions = {},
+): string => {
   const safePayload = isRecord(payload) ? payload : {};
   const noblePhantasmRecord = isRecord(safePayload.noblePhantasm)
     ? safePayload.noblePhantasm
@@ -35,6 +39,7 @@ export const buildNoblePhantasmHtml = (payload: unknown): string => {
       '/quiz/np',
       payload,
       '宝具情報を取得できませんでした。レスポンスを確認してください。',
+      { isOgp: options.isOgp },
     );
   }
 
@@ -75,5 +80,7 @@ export const buildNoblePhantasmHtml = (payload: unknown): string => {
     </div>
   </section>`;
 
-  return renderDocument('宝具 クイズ問題', content);
+  return renderDocument('宝具 クイズ問題', content, {
+    isOgp: options.isOgp,
+  });
 };

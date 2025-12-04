@@ -34,6 +34,15 @@ export const formatMultiline = (value: string): string =>
 export const stringifyPayload = (payload: unknown): string =>
   escapeHtml(JSON.stringify(payload, null, 2) ?? 'undefined');
 
+export type TemplateRenderOptions = {
+  isOgp?: boolean;
+};
+
+export type RenderDocumentOptions = TemplateRenderOptions & {
+  heroTitle?: string;
+  heroSubtitle?: string;
+};
+
 const getTodayLabel = (): string => {
   try {
     return new Intl.DateTimeFormat('ja-JP', {
@@ -68,7 +77,7 @@ const baseStyles = `
     color: #0f172a;
   }
   .page {
-    width: 900px;
+    width: 1200px;
     background: linear-gradient(180deg, rgba(248, 250, 252, 0.95), #e2e8f0);
     border-radius: 32px;
     padding: 40px;
@@ -386,6 +395,10 @@ const baseStyles = `
     border-top: 1px solid rgba(148, 163, 184, 0.4);
     padding-top: 18px;
   }
+  body.ogp-mode {
+    min-width: 1200px;
+    background: #0b2e4d;
+  }
   @media (max-width: 860px) {
     body {
       padding: 24px;
@@ -403,11 +416,14 @@ const baseStyles = `
 export const renderDocument = (
   pageTitle: string,
   mainContent: string,
-  options: { heroTitle?: string; heroSubtitle?: string } = {},
+  options: RenderDocumentOptions = {},
 ): string => {
   const todayLabel = getTodayLabel();
   const heroTitle = options.heroTitle?.trim();
   const heroSubtitle = options.heroSubtitle?.trim();
+  const isOgp = options.isOgp ?? false;
+  const viewportWidth = isOgp ? 1200 : 900;
+  const bodyClassAttr = isOgp ? ' class="ogp-mode"' : '';
 
   const heroHtml = heroTitle
     ? `<header class="hero">
@@ -421,11 +437,11 @@ export const renderDocument = (
 <html lang="ja">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=900, initial-scale=1" />
+    <meta name="viewport" content="width=${viewportWidth}, initial-scale=1" />
     <title>${escapeHtml(pageTitle)}</title>
     <style>${baseStyles}</style>
   </head>
-  <body>
+  <body${bodyClassAttr}>
     <div class="page">
       ${heroHtml}
       ${mainContent}
@@ -442,6 +458,7 @@ export const renderFallback = (
   endpoint: string,
   payload: unknown,
   message: string,
+  options?: RenderDocumentOptions,
 ): string => {
   const title = makeTitle(endpoint);
   const payloadString = stringifyPayload(payload);
@@ -453,6 +470,7 @@ export const renderFallback = (
   return renderDocument(title, content, {
     heroTitle: title,
     heroSubtitle: 'Raw payload preview',
+    isOgp: options?.isOgp,
   });
 };
 

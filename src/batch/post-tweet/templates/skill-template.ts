@@ -1,4 +1,5 @@
 import {
+  TemplateRenderOptions,
   escapeHtml,
   formatMultiline,
   getNumber,
@@ -66,7 +67,10 @@ const getDisplaySkills = (skills: SkillRecord[]): SkillRecord[] => {
     .slice(0, 3);
 };
 
-export const buildSkillHtml = (payload: unknown): string => {
+export const buildSkillHtml = (
+  payload: unknown,
+  options: TemplateRenderOptions = {},
+): string => {
   const safePayload = isRecord(payload) ? payload : {};
   const normalizedSkills = getDisplaySkills(
     normalizeSkills(safePayload.skills),
@@ -77,6 +81,7 @@ export const buildSkillHtml = (payload: unknown): string => {
       '/quiz/skill',
       payload,
       'スキル情報を取得できませんでした。レスポンスを確認してください。',
+      { isOgp: options.isOgp },
     );
   }
 
@@ -106,5 +111,7 @@ export const buildSkillHtml = (payload: unknown): string => {
     </div>
   </section>`;
 
-  return renderDocument('スキル クイズ問題', content);
+  return renderDocument('スキル クイズ問題', content, {
+    isOgp: options.isOgp,
+  });
 };

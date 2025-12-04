@@ -20,10 +20,11 @@ export type QuizCardResult = {
 export type QuizCardImageOptions = {
   width?: number;
   height?: number;
+  isOgp?: boolean;
 };
 
-const DEFAULT_VIEWPORT_WIDTH = 900;
-const DEFAULT_VIEWPORT_HEIGHT = 900;
+const DEFAULT_VIEWPORT_WIDTH = 1200;
+const DEFAULT_VIEWPORT_HEIGHT = 630;
 const RESIZE_BACKGROUND = { r: 15, g: 23, b: 42, alpha: 1 };
 
 @Injectable()
@@ -85,7 +86,9 @@ export class QuizCardService implements OnModuleDestroy {
   ): Promise<QuizCardResult> {
     const endpoint = QUIZ_CARD_ENDPOINT_MAP[type];
     const payload = await this.fetchQuizPayload(endpoint, servantId);
-    const html = buildHtml(endpoint, payload);
+    const html = buildHtml(endpoint, payload, {
+      isOgp: imageOptions?.isOgp,
+    });
     const image = await this.renderHtmlToImage(html, imageOptions);
 
     return {
@@ -148,6 +151,7 @@ export class QuizCardService implements OnModuleDestroy {
     width?: number,
     height?: number,
   ): Promise<Buffer> {
+    // return image;
     if (!width && !height) {
       return image;
     }

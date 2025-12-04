@@ -2,12 +2,17 @@ import { buildNoblePhantasmHtml } from './templates/np-template';
 import { buildProfileHtml } from './templates/profile-template';
 import { buildSkillHtml } from './templates/skill-template';
 import {
+  TemplateRenderOptions,
   makeTitle,
   renderDocument,
   stringifyPayload,
 } from './templates/shared';
 
-const buildDefaultHtml = (endpoint: string, payload: unknown): string => {
+const buildDefaultHtml = (
+  endpoint: string,
+  payload: unknown,
+  options: TemplateRenderOptions = {},
+): string => {
   const title = makeTitle(endpoint);
   const payloadString = stringifyPayload(payload);
   const content = `<section class="fallback-card">
@@ -18,21 +23,26 @@ const buildDefaultHtml = (endpoint: string, payload: unknown): string => {
   return renderDocument(title, content, {
     heroTitle: title,
     heroSubtitle: 'Raw payload preview',
+    isOgp: options.isOgp,
   });
 };
 
-export const buildHtml = (endpoint: string, payload: unknown): string => {
+export const buildHtml = (
+  endpoint: string,
+  payload: unknown,
+  options: TemplateRenderOptions = {},
+): string => {
   if (endpoint.includes('np')) {
-    return buildNoblePhantasmHtml(payload);
+    return buildNoblePhantasmHtml(payload, options);
   }
 
   if (endpoint.includes('profile')) {
-    return buildProfileHtml(payload);
+    return buildProfileHtml(payload, options);
   }
 
   if (endpoint.includes('skill')) {
-    return buildSkillHtml(payload);
+    return buildSkillHtml(payload, options);
   }
 
-  return buildDefaultHtml(endpoint, payload);
+  return buildDefaultHtml(endpoint, payload, options);
 };

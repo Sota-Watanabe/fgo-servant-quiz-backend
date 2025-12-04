@@ -1,4 +1,5 @@
 import {
+  TemplateRenderOptions,
   formatMultiline,
   getString,
   isRecord,
@@ -6,7 +7,10 @@ import {
   renderFallback,
 } from './shared';
 
-export const buildProfileHtml = (payload: unknown): string => {
+export const buildProfileHtml = (
+  payload: unknown,
+  options: TemplateRenderOptions = {},
+): string => {
   const safePayload = isRecord(payload) ? payload : {};
   const baseProfile = isRecord(safePayload.baseProfile)
     ? safePayload.baseProfile
@@ -21,6 +25,7 @@ export const buildProfileHtml = (payload: unknown): string => {
       '/quiz/profile',
       payload,
       'プロフィール情報を取得できませんでした。レスポンスを確認してください。',
+      { isOgp: options.isOgp },
     );
   }
 
@@ -31,5 +36,7 @@ export const buildProfileHtml = (payload: unknown): string => {
     </div>
   </section>`;
 
-  return renderDocument('プロフィール クイズ問題', content);
+  return renderDocument('プロフィール クイズ問題', content, {
+    isOgp: options.isOgp,
+  });
 };
