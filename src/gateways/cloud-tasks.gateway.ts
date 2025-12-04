@@ -20,6 +20,9 @@ export class CloudTasksGateway {
     this.queueName = process.env.CLOUD_TASKS_QUEUE_NAME || '';
     this.serviceUrl = process.env.BATCH_SERVICE_URL || '';
 
+    this.logger.warn(
+      `Cloud Tasks not configured. Skipping task creation for ${this.projectId}/${this.serviceUrl}`,
+    );
     if (this.projectId && this.serviceUrl) {
       this.client = new CloudTasksClient();
       this.logger.log(
@@ -49,9 +52,6 @@ export class CloudTasksGateway {
     servantId: number,
   ): Promise<void> {
     if (!this.client || !this.isConfigured()) {
-      this.logger.warn(
-        `Cloud Tasks not configured. Skipping task creation for ${type}/${servantId}`,
-      );
       return;
     }
 
