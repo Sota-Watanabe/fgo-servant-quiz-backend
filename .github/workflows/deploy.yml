@@ -168,6 +168,7 @@ jobs:
             --service-account ${{ secrets.GCP_SERVICE_ACCOUNT }} \
             --allow-unauthenticated \
             --port 8080 \
+            --cpu-boost \
             --set-env-vars "NODE_ENV=production" \
             --set-env-vars "APP_ENTRY=dist/src/batch-main.js" \
             --set-env-vars "QUIZ_API_BASE_URL=${{ secrets.QUIZ_API_BASE_URL }}" \
