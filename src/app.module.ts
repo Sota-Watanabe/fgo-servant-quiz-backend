@@ -18,6 +18,7 @@ import { GetQuizNpInteractor } from '@/interactors/get-quiz-np.interactor';
 import { DatabaseModule } from '@/database/database.module';
 import { RepositoriesModule } from '@/repositories/repositories.module';
 import { VertexAiApiService } from '@/services/vertex-ai-api.service';
+import { OgpModule } from './ogp/ogp.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { VertexAiApiService } from '@/services/vertex-ai-api.service';
     }),
     DatabaseModule,
     RepositoriesModule,
+    OgpModule,
   ],
   controllers: [AppController, QuizController, ServantsController],
   providers: [

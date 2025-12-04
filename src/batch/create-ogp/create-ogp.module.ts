@@ -7,6 +7,7 @@ import { QuizCardService } from '@/services/quiz-card.service';
 import { FgoGameApiService } from '@/services/fgo-game-api.service';
 import { DumpService } from '@/services/dump.service';
 import { AtlasAcademyGateway } from '@/gateways/atlasacademy.gateway';
+import { CloudStorageGateway } from '@/gateways/cloud-storage.gateway';
 import { DatabaseModule } from '@/database/database.module';
 import { RepositoriesModule } from '@/repositories/repositories.module';
 
@@ -19,6 +20,7 @@ import { RepositoriesModule } from '@/repositories/repositories.module';
     FgoGameApiService,
     DumpService,
     AtlasAcademyGateway,
+    CloudStorageGateway,
   ],
 })
 export class CreateOgpModule {}
