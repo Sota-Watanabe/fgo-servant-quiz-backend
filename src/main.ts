@@ -2,12 +2,13 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { Request, Response } from 'express';
+import { JsonLogger } from './common/json-logger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // 構造化ログを使用
-  app.useLogger(['log', 'error', 'warn', 'debug']);
+  // JSON 形式のログを使用（Cloud Logging 用）
+  app.useLogger(new JsonLogger());
 
   // OpenAPI (Swagger) 設定
   const config = new DocumentBuilder()
@@ -74,8 +75,10 @@ async function bootstrap() {
   const port = Number.isNaN(parsedPort) ? 8888 : parsedPort;
   // Cloud Run用に0.0.0.0でリッスン
   await app.listen(port, '0.0.0.0');
-  console.log(`Application is running on port ${port}`);
-  console.log(`Swagger UI is available at http://localhost:${port}/api`);
+  
+  const logger = new JsonLogger('Bootstrap');
+  logger.log(`Application is running on port ${port}`);
+  logger.log(`Swagger UI is available at http://localhost:${port}/api`);
 }
 
 void bootstrap();
