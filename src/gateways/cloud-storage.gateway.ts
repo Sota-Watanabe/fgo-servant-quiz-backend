@@ -26,6 +26,9 @@ export class CloudStorageGateway {
   }
 
   isConfigured(): boolean {
+    if (process.env.NODE_ENV !== 'production') {
+      return false;
+    }
     return this.storage !== null && !!this.bucketName;
   }
 

@@ -154,6 +154,11 @@ export class QuizCardService implements OnModuleDestroy {
         targetHeight,
       );
 
+      const metadata = await sharp(resizedImage).metadata();
+      console.log(
+        `Final image size: ${metadata.width}px × ${metadata.height}px`,
+      );
+
       return resizedImage;
     } finally {
       await page.close(); // ページを必ずクローズしてメモリを解放

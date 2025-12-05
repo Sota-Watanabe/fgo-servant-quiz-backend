@@ -56,7 +56,7 @@ const getTodayLabel = (): string => {
   }
 };
 
-const baseStyles = `
+const baseStyles = (isOgp: boolean) => `
   :root {
     color-scheme: dark;
   }
@@ -72,12 +72,12 @@ const baseStyles = `
     display: flex;
     align-items: center;
     justify-content: center;
-    background: radial-gradient(circle at 10% 20%, #0ea5e9 0%, #0f172a 55%);
+    background: #0b2e4d;
     font-family: 'Noto Sans JP', 'Hiragino Sans', 'Meiryo', sans-serif;
     color: #0f172a;
   }
   .page {
-    width: 1200px;
+    width: ${isOgp ? '1200px' : '900px'};
     background: linear-gradient(180deg, rgba(248, 250, 252, 0.95), #e2e8f0);
     border-radius: 32px;
     padding: 40px;
@@ -395,22 +395,6 @@ const baseStyles = `
     border-top: 1px solid rgba(148, 163, 184, 0.4);
     padding-top: 18px;
   }
-  body.ogp-mode {
-    min-width: 1200px;
-    background: #0b2e4d;
-  }
-  @media (max-width: 860px) {
-    body {
-      padding: 24px;
-    }
-    .page {
-      width: 100%;
-    }
-    .meta-grid,
-    .status-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-  }
 `;
 
 export const renderDocument = (
@@ -422,8 +406,8 @@ export const renderDocument = (
   const heroTitle = options.heroTitle?.trim();
   const heroSubtitle = options.heroSubtitle?.trim();
   const isOgp = options.isOgp ?? false;
+  console.log('isOgp:', isOgp);
   const viewportWidth = isOgp ? 1200 : 900;
-  const bodyClassAttr = isOgp ? ' class="ogp-mode"' : '';
 
   const heroHtml = heroTitle
     ? `<header class="hero">
@@ -439,9 +423,9 @@ export const renderDocument = (
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=${viewportWidth}, initial-scale=1" />
     <title>${escapeHtml(pageTitle)}</title>
-    <style>${baseStyles}</style>
+    <style>${baseStyles(isOgp)}</style>
   </head>
-  <body${bodyClassAttr}>
+  <body>
     <div class="page">
       ${heroHtml}
       ${mainContent}
