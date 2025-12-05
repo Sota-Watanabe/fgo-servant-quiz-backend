@@ -23,6 +23,9 @@ export class OgpService {
   async getOgpImage(type: QuizCardType, servantId: number): Promise<Buffer> {
     try {
       // Cloud Storage から取得を試みる
+      this.logger.log(
+        `Checking Cloud Storage for OGP image: type=${type}, servantId=${servantId}`,
+      );
       if (this.cloudStorageGateway.isConfigured()) {
         return await this.getFromCloudStorage(type, servantId);
       }
