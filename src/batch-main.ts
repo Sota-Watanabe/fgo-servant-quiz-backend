@@ -4,6 +4,9 @@ import { BatchAppModule } from './batch/batch-app.module';
 async function bootstrap() {
   const app = await NestFactory.create(BatchAppModule);
 
+  // 構造化ログを使用
+  app.useLogger(['log', 'error', 'warn', 'debug']);
+
   const parsedPort = parseInt(process.env.PORT ?? '', 10);
   const port = Number.isNaN(parsedPort) ? 8889 : parsedPort;
 

@@ -6,6 +6,9 @@ import { Request, Response } from 'express';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  // 構造化ログを使用
+  app.useLogger(['log', 'error', 'warn', 'debug']);
+
   // OpenAPI (Swagger) 設定
   const config = new DocumentBuilder()
     .setTitle('FGO Servant Quiz API')
