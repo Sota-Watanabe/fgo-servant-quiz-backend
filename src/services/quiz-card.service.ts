@@ -18,8 +18,6 @@ export type QuizCardResult = {
 };
 
 export type QuizCardImageOptions = {
-  width?: number;
-  height?: number;
   isOgp?: boolean;
 };
 
@@ -129,18 +127,14 @@ export class QuizCardService implements OnModuleDestroy {
     html: string,
     imageOptions?: QuizCardImageOptions,
   ): Promise<Buffer> {
-    const targetWidth = imageOptions?.width;
-    const targetHeight = imageOptions?.height;
-    const viewportWidth = targetWidth ?? DEFAULT_VIEWPORT_WIDTH;
-    const viewportHeight = targetHeight ?? DEFAULT_VIEWPORT_HEIGHT;
     const browser = await this.getBrowser();
     const page = await browser.newPage();
 
     try {
       await page.setViewport({
-        width: viewportWidth,
-        height: viewportHeight,
-        deviceScaleFactor: 2,
+        width: DEFAULT_VIEWPORT_WIDTH,
+        height: DEFAULT_VIEWPORT_HEIGHT,
+        deviceScaleFactor: 1,
       });
       await page.setContent(html, { waitUntil: 'networkidle0' });
       const screenshot = (await page.screenshot({
@@ -148,13 +142,16 @@ export class QuizCardService implements OnModuleDestroy {
         fullPage: true,
       })) as Buffer;
 
-      const resizedImage = await this.resizeImageIfNeeded(
-        screenshot,
-        targetWidth,
-        targetHeight,
+      let metadata = await sharp(screenshot).metadata();
+      console.log(
+        `Final image size: ${metadata.width}px × ${metadata.height}px`,
       );
-
-      const metadata = await sharp(resizedImage).metadata();
+      // OGP 画像の場合はリサイズ処理を行う
+      if (!imageOptions?.isOgp) {
+        return screenshot;
+      }
+      const resizedImage = await this.resizeImageIfNeeded(screenshot);
+      metadata = await sharp(resizedImage).metadata();
       console.log(
         `Final image size: ${metadata.width}px × ${metadata.height}px`,
       );
@@ -165,28 +162,15 @@ export class QuizCardService implements OnModuleDestroy {
     }
   }
 
-  private async resizeImageIfNeeded(
-    image: Buffer,
-    width?: number,
-    height?: number,
-  ): Promise<Buffer> {
-    // return image;
-    if (!width && !height) {
-      return image;
-    }
-
-    if (width && height) {
-      return sharp(image)
-        .resize(width, height, {
-          fit: 'contain',
-          background: RESIZE_BACKGROUND,
-        })
-        .png()
-        .toBuffer();
-    }
+  private async resizeImageIfNeeded(image: Buffer): Promise<Buffer> {
+    const width = 1200;
+    const height = 630;
 
     return sharp(image)
-      .resize(width ?? null, height ?? null)
+      .resize(width, height, {
+        fit: 'contain',
+        background: RESIZE_BACKGROUND,
+      })
       .png()
       .toBuffer();
   }
