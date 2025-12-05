@@ -75,7 +75,6 @@ const baseStyles = (isOgp: boolean) => `
     background: #0b2e4d;
     font-family: 'Noto Sans JP', 'Hiragino Sans', 'Meiryo', sans-serif;
     color: #0f172a;
-    width: ${isOgp ? '1200px' : '900px'};
   }
   .page {
     background: linear-gradient(180deg, rgba(248, 250, 252, 0.95), #e2e8f0);
@@ -83,6 +82,8 @@ const baseStyles = (isOgp: boolean) => `
     padding: 40px;
     box-shadow: 0 40px 70px rgba(15, 23, 42, 0.45);
     border: 1px solid rgba(148, 163, 184, 0.4);
+    width: ${isOgp ? '1200px' : '900px'};
+    max-width: 100%;
   }
   .hero {
     text-align: center;
