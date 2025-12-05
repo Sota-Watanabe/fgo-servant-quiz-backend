@@ -51,9 +51,8 @@ export class CloudStorageGateway {
       },
     });
 
-    // ファイルを公開設定にする
-    await file.makePublic();
-
+    // Uniform bucket-level access が有効な場合は makePublic() を使用できないため
+    // バケットレベルで allUsers に Storage Object Viewer 権限を付与する必要があります
     const publicUrl = `https://storage.googleapis.com/${this.bucketName}/${destination}`;
     this.logger.log(`File uploaded successfully: ${publicUrl}`);
 
