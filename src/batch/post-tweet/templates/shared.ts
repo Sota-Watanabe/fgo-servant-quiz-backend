@@ -75,9 +75,9 @@ const baseStyles = (isOgp: boolean) => `
     background: #0b2e4d;
     font-family: 'Noto Sans JP', 'Hiragino Sans', 'Meiryo', sans-serif;
     color: #0f172a;
+    width: ${isOgp ? '1200px' : '900px'};
   }
   .page {
-    width: ${isOgp ? '1200px' : '900px'};
     background: linear-gradient(180deg, rgba(248, 250, 252, 0.95), #e2e8f0);
     border-radius: 32px;
     padding: 40px;

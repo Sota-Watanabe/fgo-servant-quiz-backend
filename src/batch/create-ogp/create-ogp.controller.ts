@@ -45,19 +45,13 @@ export class CreateOgpController {
   async createOgpImage(
     @Query('type') type: string,
     @Query('servantId') servantId?: string,
-    @Query('width') width?: string,
-    @Query('height') height?: string,
   ) {
     const quizType = this.parseQuizType(type);
     const parsedServantId = this.parseServantId(servantId);
-    const parsedWidth = this.parseDimension(width, 'width', 1200);
-    const parsedHeight = this.parseDimension(height, 'height', 630);
 
     return await this.createOgpService.createOgpImage(
       quizType,
       parsedServantId,
-      parsedWidth,
-      parsedHeight,
     );
   }
 

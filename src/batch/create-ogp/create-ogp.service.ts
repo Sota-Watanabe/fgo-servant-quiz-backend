@@ -14,16 +14,11 @@ export class CreateOgpService {
     private readonly cloudStorageGateway: CloudStorageGateway,
   ) {}
 
-  async createOgpImage(
-    type: QuizCardType,
-    servantId?: number,
-    width?: number,
-    height?: number,
-  ) {
+  async createOgpImage(type: QuizCardType, servantId?: number) {
     const { image, payload } = await this.quizCardService.generateQuizCard(
       type,
       servantId,
-      { width, height, isOgp: true },
+      { isOgp: true },
     );
 
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
@@ -56,7 +51,6 @@ export class CreateOgpService {
       url,
       type,
       servantId,
-      dimensions: { width, height },
       payload,
     };
   }
