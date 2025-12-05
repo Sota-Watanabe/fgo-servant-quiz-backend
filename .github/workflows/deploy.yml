@@ -159,7 +159,7 @@ jobs:
             --set-env-vars "GCS_BUCKET_NAME=${{ secrets.GCS_BUCKET_NAME }}" \
             --set-env-vars "CLOUD_TASKS_LOCATION=${{ env.REGION }}" \
             --set-env-vars "CLOUD_TASKS_QUEUE_NAME=${{ secrets.CLOUD_TASKS_QUEUE_NAME }}" \
-            --set-env-vars "BATCH_SERVICE_URL=${{ secrets.BATCH_SERVICE_URL }}"
+            --set-env-vars "BATCH_SERVICE_URL=${{ secrets.BATCH_SERVICE_URL }}" \
             --set-env-vars "GCP_PROJECT_ID=${{ env.PROJECT_ID }}" \
         env:
           CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE: ${{ steps.auth.outputs.credentials_file_path }}
