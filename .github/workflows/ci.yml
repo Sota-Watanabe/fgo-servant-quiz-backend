@@ -98,11 +98,11 @@ jobs:
 
       - name: Test Docker image
         run: |
-          docker run --rm -d --name test-container -p 8080:8080 fgo-backend:test
-          sleep 5
+          docker run --rm -d --name test-container -p 8888:8888 -e PORT=8888 fgo-backend:test
+          sleep 10
           
           # ヘルスチェック（rootエンドポイント）
-          curl -f http://localhost:8080/ || exit 1
+          curl -f http://localhost:8888/ || exit 1
           
           docker stop test-container
           echo "✅ Docker image test passed"

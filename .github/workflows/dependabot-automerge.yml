@@ -1,0 +1,65 @@
+name: Dependabot Auto-merge
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  dependabot-automerge:
+    runs-on: ubuntu-latest
+    if: github.actor == 'dependabot[bot]'
+    steps:
+      - name: Wait for CI checks
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            let checks;
+            let attempts = 0;
+            const maxAttempts = 60;
+            
+            while (attempts < maxAttempts) {
+              checks = await github.rest.checks.listForRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: pr.head.sha
+              });
+              
+              const statuses = await github.rest.repos.getCombinedStatusForRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: pr.head.sha
+              });
+              
+              const allChecks = [
+                ...checks.data.check_runs,
+                ...statuses.data.statuses.map(s => ({ status: s.state === 'success' ? 'completed' : s.state, conclusion: s.state }))
+              ];
+              
+              const pending = allChecks.filter(c => c.status !== 'completed');
+              const failed = allChecks.filter(c => c.conclusion === 'failure');
+              
+              if (failed.length > 0) {
+                throw new Error('CI checks failed');
+              }
+              
+              if (pending.length === 0 && allChecks.length > 0) {
+                break;
+              }
+              
+              await new Promise(resolve => setTimeout(resolve, 10000));
+              attempts++;
+            }
+
+      - name: Enable auto-merge
+        uses: peter-evans/enable-pull-request-automerge@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          pull-request-number: ${{ github.event.pull_request.number }}
+          merge-method: squash
