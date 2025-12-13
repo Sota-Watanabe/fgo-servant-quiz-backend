@@ -100,10 +100,27 @@ jobs:
       - name: Test Docker image
         run: |
           docker run --rm -d --name test-container -p 8888:8888 -e PORT=8888 fgo-backend:test
-          sleep 10
           
-          # ヘルスチェック（rootエンドポイント）
-          curl -f http://localhost:8888/ || exit 1
+          echo "Waiting for container to be healthy..."
+          sleep 15
           
+          # コンテナログを確認
+          docker logs test-container
+          
+          # ヘルスチェック（リトライ付き）
+          for i in {1..5}; do
+            echo "Health check attempt $i/5..."
+            if curl -f http://localhost:8888/ 2>/dev/null; then
+              echo "✅ Health check passed"
+              docker stop test-container
+              echo "✅ Docker image test passed"
+              exit 0
+            fi
+            echo "Waiting 5 more seconds..."
+            sleep 5
+          done
+          
+          echo "❌ Health check failed after 5 attempts"
+          docker logs test-container
           docker stop test-container
-          echo "✅ Docker image test passed"
+          exit 1
