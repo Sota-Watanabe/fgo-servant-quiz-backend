@@ -120,7 +120,7 @@ jobs:
             -e DB_PORT=3306 \
             -e DB_USERNAME=root \
             -e DB_PASSWORD=test_password \
-            -e DB_DATABASE=fgo_quiz_test \
+            -e DB_NAME=fgo_quiz_test \
             --add-host=host.docker.internal:host-gateway \
             fgo-backend:test
           
