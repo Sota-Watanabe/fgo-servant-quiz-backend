@@ -53,7 +53,24 @@ jobs:
               const pending = allChecks.filter(c => c.status !== 'completed');
               const failed = allChecks.filter(c => c.conclusion === 'failure');
               
+              console.log('=== Debug Info ===');
+              console.log(`Total checks: ${checks.data.check_runs.length}`);
+              console.log(`Excluded checks: ${checks.data.check_runs.length - relevantChecks.length}`);
+              console.log(`Relevant checks: ${relevantChecks.length}`);
+              console.log(`Statuses: ${statuses.data.statuses.length}`);
+              
+              if (pending.length > 0) {
+                console.log('Pending checks:');
+                pending.forEach(c => {
+                  console.log(`  - ${c.name || c.context}: status=${c.status}, conclusion=${c.conclusion}`);
+                });
+              }
+              
               if (failed.length > 0) {
+                console.log('Failed checks:');
+                failed.forEach(c => {
+                  console.log(`  - ${c.name || c.context}: ${c.conclusion}`);
+                });
                 throw new Error('CI checks failed');
               }
               
