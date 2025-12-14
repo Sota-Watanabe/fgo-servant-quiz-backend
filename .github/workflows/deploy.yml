@@ -28,7 +28,7 @@ jobs:
       # ソースコード取得
       # ------------------------------------
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       # ------------------------------------
       # Node.js セットアップ（マイグレーション実行用）
