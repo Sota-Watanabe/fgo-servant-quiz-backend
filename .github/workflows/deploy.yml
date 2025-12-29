@@ -96,6 +96,35 @@ jobs:
           CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE: ${{ steps.auth.outputs.credentials_file_path }}
 
       # ------------------------------------
+      # 古いイメージのクリーンアップ（最新5つのみ保持）
+      # ------------------------------------
+      - name: Clean up old images
+        run: |
+          echo "🗑️  古いイメージを削除中（最新5つとlatestタグを保持）..."
+          
+          # latest タグを除く古いイメージを削除（最新5つは保持）
+          IMAGES_TO_DELETE=$(gcloud artifacts docker images list \
+            ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }} \
+            --include-tags \
+            --format="get(IMAGE)" \
+            --sort-by="~CREATE_TIME" \
+            --limit=999 | tail -n +6 | grep -v ":latest$" || true)
+          
+          if [ -n "$IMAGES_TO_DELETE" ]; then
+            echo "$IMAGES_TO_DELETE" | while read -r image; do
+              if [ -n "$image" ]; then
+                echo "削除: $image"
+                gcloud artifacts docker images delete "$image" --quiet || true
+              fi
+            done
+            echo "✅ クリーンアップ完了"
+          else
+            echo "✅ 削除対象のイメージはありません"
+          fi
+        env:
+          CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE: ${{ steps.auth.outputs.credentials_file_path }}
+
+      # ------------------------------------
       # TypeORM マイグレーション実行
       # ------------------------------------
       - name: Run database migrations
