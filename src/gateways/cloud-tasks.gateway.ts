@@ -84,4 +84,57 @@ export class CloudTasksGateway {
       throw error;
     }
   }
+
+  /**
+   * basic_servant.json更新タスクをキューに追加（5分後に実行）
+   */
+  async createUpdateBasicServantTask(): Promise<void> {
+    if (!this.client || !this.isConfigured()) {
+      this.logger.warn(
+        'Cloud Tasks is not configured. Skipping update-basic-servant task.',
+      );
+      return;
+    }
+
+    const parent = this.client.queuePath(
+      this.projectId,
+      this.location,
+      this.queueName,
+    );
+
+    const url = `${this.serviceUrl}/batch/update-basic-servant`;
+
+    // 5分後にスケジュール
+    const scheduleTime = new Date();
+    scheduleTime.setMinutes(scheduleTime.getMinutes() + 5);
+
+    const task = {
+      httpRequest: {
+        httpMethod: 'POST' as const,
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+      scheduleTime: {
+        seconds: Math.floor(scheduleTime.getTime() / 1000),
+      },
+      dispatchDeadline: {
+        seconds: 300, // 5分のタイムアウト
+      },
+    };
+
+    try {
+      const [response] = await this.client.createTask({ parent, task });
+      this.logger.log(
+        `Created task ${response.name} for update-basic-servant. Scheduled at: ${scheduleTime.toISOString()}`,
+      );
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      this.logger.error(
+        `Failed to create update-basic-servant Cloud Task: ${message}`,
+      );
+      throw error;
+    }
+  }
 }
