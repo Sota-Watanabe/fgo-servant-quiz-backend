@@ -46,28 +46,42 @@ jobs:
           SERVICE_URL=$(gcloud run services describe ${{ env.BATCH_SERVICE_NAME }} \
             --region=${{ env.REGION }} \
             --format='value(status.url)')
+          
+          if [ -z "$SERVICE_URL" ]; then
+            echo "Error: Could not get service URL"
+            exit 1
+          fi
+          
           echo "service_url=$SERVICE_URL" >> $GITHUB_OUTPUT
           echo "Batch Service URL: $SERVICE_URL"
         env:
           CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE: ${{ steps.auth.outputs.credentials_file_path }}
 
       # ------------------------------------
-      # IDトークンを取得してAPIを呼び出し
+      # APIを呼び出し（認証なし: --allow-unauthenticatedでデプロイされているため）
       # ------------------------------------
       - name: Call update-basic-servant API
         run: |
-          # Cloud Run サービス用のIDトークンを取得
-          ID_TOKEN=$(gcloud auth print-identity-token)
+          echo "Calling API: ${{ steps.get-url.outputs.service_url }}/batch/update-basic-servant"
           
-          # APIを呼び出し
-          curl -X POST \
-            -H "Authorization: Bearer ${ID_TOKEN}" \
+          RESPONSE=$(curl -X POST \
             -H "Content-Type: application/json" \
-            -w "\nHTTP Status: %{http_code}\n" \
-            --fail-with-body \
-            ${{ steps.get-url.outputs.service_url }}/batch/update-basic-servant
-        env:
-          CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE: ${{ steps.auth.outputs.credentials_file_path }}
+            -w "\n%{http_code}" \
+            -s \
+            ${{ steps.get-url.outputs.service_url }}/batch/update-basic-servant)
+          
+          HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | sed '$d')
+          
+          echo "Response Body: $BODY"
+          echo "HTTP Status: $HTTP_CODE"
+          
+          if [ "$HTTP_CODE" -ge 200 ] && [ "$HTTP_CODE" -lt 300 ]; then
+            echo "✅ API call succeeded"
+          else
+            echo "❌ API call failed with status $HTTP_CODE"
+            exit 1
+          fi
 
       # ------------------------------------
       # 完了通知
