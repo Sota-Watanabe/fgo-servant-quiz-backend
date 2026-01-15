@@ -3,9 +3,11 @@ import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { GetQuizProfileInteractor } from '@/interactors/get-quiz-profile.interactor';
 import { GetQuizSkillInteractor } from '@/interactors/get-quiz-skill.interactor';
 import { GetQuizNpInteractor } from '@/interactors/get-quiz-np.interactor';
+import { GetQuizNpVoiceInteractor } from '@/interactors/get-quiz-np-voice.interactor';
 import { ServantSkillGetResponseDto } from '@/dto/servant-skill-get-response.dto';
 import { ServantProfileGetResponseDto } from '@/dto/servant-profile-get-response.dto';
 import { ServantNpGetResponseDto } from '@/dto/servant-np-get-response.dto';
+import { ServantNpVoiceGetResponseDto } from '@/dto/servant-np-voice-get-response.dto';
 
 @ApiTags('quiz')
 @Controller('quiz')
@@ -14,6 +16,7 @@ export class QuizController {
     private readonly getQuizSkillInteractor: GetQuizSkillInteractor,
     private readonly getQuizProfileInteractor: GetQuizProfileInteractor,
     private readonly getQuizNpInteractor: GetQuizNpInteractor,
+    private readonly getQuizNpVoiceInteractor: GetQuizNpVoiceInteractor,
   ) {}
 
   @Get('skill')
@@ -86,6 +89,30 @@ export class QuizController {
   ): Promise<ServantNpGetResponseDto> {
     const parsedServantId = this.parseServantId(servantId);
     return await this.getQuizNpInteractor.execute(parsedServantId);
+  }
+
+  @Get('np-voice')
+  @ApiOperation({
+    summary: '宝具ボイスクイズの取得',
+    description:
+      'ランダム、またはクエリで指定したサーヴァントIDの宝具ボイス情報を返します',
+  })
+  @ApiQuery({
+    name: 'servantId',
+    required: false,
+    type: Number,
+    description: '指定すると該当サーヴァントの宝具ボイス情報を返します',
+  })
+  @ApiResponse({
+    status: 200,
+    description: '宝具ボイスクイズデータ',
+    type: ServantNpVoiceGetResponseDto,
+  })
+  async getNpVoiceQuiz(
+    @Query('servantId') servantId?: string,
+  ): Promise<ServantNpVoiceGetResponseDto> {
+    const parsedServantId = this.parseServantId(servantId);
+    return await this.getQuizNpVoiceInteractor.execute(parsedServantId);
   }
 
   private parseServantId(servantId?: string): number | undefined {

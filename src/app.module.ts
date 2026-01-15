@@ -15,6 +15,7 @@ import { GetServantOptionsInteractor } from '@/interactors/get-servant-options.i
 import { GetQuizSkillInteractor } from '@/interactors/get-quiz-skill.interactor';
 import { GetQuizProfileInteractor } from '@/interactors/get-quiz-profile.interactor';
 import { GetQuizNpInteractor } from '@/interactors/get-quiz-np.interactor';
+import { GetQuizNpVoiceInteractor } from '@/interactors/get-quiz-np-voice.interactor';
 import { DatabaseModule } from '@/database/database.module';
 import { RepositoriesModule } from '@/repositories/repositories.module';
 import { VertexAiApiService } from '@/services/vertex-ai-api.service';
@@ -45,6 +46,7 @@ import { OgpModule } from './ogp/ogp.module';
     GetQuizSkillInteractor,
     GetQuizProfileInteractor,
     GetQuizNpInteractor,
+    GetQuizNpVoiceInteractor,
   ],
 })
 export class AppModule {}

@@ -89,6 +89,26 @@ export type Profile = {
   stats: ProfileStats;
   costume: Record<string, any>;
   comments: ProfileComment[];
+  voices: Voice[];
+};
+
+export type Voice = {
+  svtId: number;
+  voicePrefix: number;
+  type: string;
+  voiceLines: VoiceLine[];
+};
+
+export type VoiceLine = {
+  name: string;
+  condType: string;
+  condValue: number;
+  priority: number;
+  svtVoiceType: string;
+  overwriteName: string;
+  id: string[];
+  audioAssets: string[];
+  delay: number[];
 };
 
 export type ProfileStats = {
