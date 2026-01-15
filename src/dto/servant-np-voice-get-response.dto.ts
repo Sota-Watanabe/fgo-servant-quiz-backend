@@ -50,7 +50,7 @@ class VoiceLineDto {
   constructor(
     voiceLine: NiceServantDetailResponse['profile']['voices'][number]['voiceLines'][number],
   ) {
-    this.name = voiceLine.name;
+    this.name = voiceLine.overwriteName || voiceLine.name;
     this.id = voiceLine.id;
     this.audioAssets = voiceLine.audioAssets;
     this.delay = voiceLine.delay;
@@ -167,16 +167,24 @@ export class ServantNpVoiceGetResponseDto {
     this.classId = servantDetail.classId;
     this.rarity = servantDetail.rarity;
 
-    // 最後のtresuredeviceのvoiceLinesが対象かも
     // 宝具ボイスを抽出（type が 'treasureDevice' のもの）
-    const npVoice = servantDetail.profile.voices
-      .filter((voice) => voice.type === 'treasureDevice')
-      .slice(-1)[0];
-    console.log('npVoice:', npVoice);
-    const voiceLines = npVoice.voiceLines.map((vl) => new VoiceLineDto(vl));
-
-    this.noblePhantasms = servantDetail.noblePhantasms.map(
-      (np) => new NoblePhantasmVoiceDto(np, voiceLines),
+    const npVoices = servantDetail.profile.voices.filter(
+      (voice) => voice.type === 'treasureDevice',
+    );
+    console.log('npVoices:', npVoices);
+    const voiceLines = npVoices.flatMap((voice) =>
+      voice.voiceLines.map((vl) => new VoiceLineDto(vl)),
+    );
+    console.log(
+      'servantDetail.noblePhantasms[-1]:',
+      servantDetail.noblePhantasms[servantDetail.noblePhantasms.length - 1],
+    );
+    this.noblePhantasms = voiceLines.map(
+      (vl) =>
+        new NoblePhantasmVoiceDto(
+          servantDetail.noblePhantasms[servantDetail.noblePhantasms.length - 1],
+          [vl],
+        ),
     );
 
     this.imageUrl = servantDetail.extraAssets.charaGraph.ascension['1'];
