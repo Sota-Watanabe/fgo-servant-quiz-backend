@@ -39,7 +39,7 @@
     "@nestjs/typeorm": "^11.0.0",
     "axios": "^1.13.3",
     "google-auth-library": "^10.5.0",
-    "mysql2": "^3.16.1",
+    "mysql2": "^3.16.2",
     "puppeteer": "^24.36.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
