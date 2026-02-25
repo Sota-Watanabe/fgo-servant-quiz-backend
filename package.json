@@ -38,7 +38,7 @@
     "@nestjs/swagger": "^11.2.6",
     "@nestjs/typeorm": "^11.0.0",
     "axios": "^1.13.5",
-    "google-auth-library": "^10.5.0",
+    "google-auth-library": "^10.6.1",
     "mysql2": "^3.18.0",
     "puppeteer": "^24.37.5",
     "reflect-metadata": "^0.2.2",
