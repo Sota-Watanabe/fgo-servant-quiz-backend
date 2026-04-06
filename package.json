@@ -31,7 +31,7 @@
     "@google-cloud/tasks": "^6.2.1",
     "@google-cloud/vertexai": "^1.10.4",
     "@nestjs/axios": "^4.0.1",
-    "@nestjs/common": "^11.1.17",
+    "@nestjs/common": "^11.1.18",
     "@nestjs/config": "^4.0.3",
     "@nestjs/core": "^11.1.17",
     "@nestjs/platform-express": "^11.1.17",
