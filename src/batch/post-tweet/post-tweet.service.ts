@@ -48,15 +48,17 @@ export class PostTweetService {
 
   private async tweetImage(
     endpoint: string,
-    image: Buffer,
+    image: Buffer | Uint8Array,
     answerUrl: string,
   ): Promise<void> {
     const credentials = this.readTwitterCredentials();
     const twitterClient = new TwitterApi(credentials);
     const tweetText = this.buildTweetText(endpoint, answerUrl);
+    const mediaBuffer = Buffer.isBuffer(image) ? image : Buffer.from(image);
 
-    const mediaId = await twitterClient.v1.uploadMedia(image, {
-      type: 'png',
+    const mediaId = await twitterClient.v1.uploadMedia(mediaBuffer, {
+      mimeType: 'image/png',
+      target: 'tweet',
     });
 
     await twitterClient.v2.tweet(tweetText, {
