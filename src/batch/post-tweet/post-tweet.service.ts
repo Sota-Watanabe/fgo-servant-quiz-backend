@@ -14,6 +14,7 @@ export class PostTweetService {
   ) {}
 
   async postDailyTweet(type?: QuizCardType): Promise<{ status: 'ok' }> {
+    this.logger.log(`Starting postDailyTweet with type: ${type ?? 'random'}`);
     try {
       const quizType = this.pickQuizType(type);
       const { endpoint, payload, image } =
