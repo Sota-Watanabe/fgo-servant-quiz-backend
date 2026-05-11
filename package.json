@@ -46,7 +46,7 @@
     "sharp": "^0.34.5",
     "swagger-ui-express": "^5.0.1",
     "twitter-api-v2": "^1.29.0",
-    "typeorm": "^0.3.28"
+    "typeorm": "^0.3.29"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",
