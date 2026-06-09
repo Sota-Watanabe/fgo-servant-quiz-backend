@@ -27,7 +27,7 @@
     "migrate:generate": "node scripts/migrate-generate.js"
   },
   "dependencies": {
-    "@google-cloud/storage": "^7.19.0",
+    "@google-cloud/storage": "^7.21.0",
     "@google-cloud/tasks": "^6.2.3",
     "@google-cloud/vertexai": "^1.12.0",
     "@nestjs/axios": "^4.0.1",
