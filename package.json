@@ -37,7 +37,7 @@
     "@nestjs/platform-express": "^11.1.27",
     "@nestjs/swagger": "^11.4.4",
     "@nestjs/typeorm": "^11.0.2",
-    "axios": "^1.18.0",
+    "axios": "^1.18.1",
     "google-auth-library": "^10.7.0",
     "mysql2": "^3.22.5",
     "puppeteer": "^24.43.0",
