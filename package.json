@@ -40,7 +40,7 @@
     "axios": "^1.18.1",
     "google-auth-library": "^10.9.0",
     "mysql2": "^3.22.5",
-    "puppeteer": "^24.43.0",
+    "puppeteer": "^25.3.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
     "sharp": "^0.35.3",
