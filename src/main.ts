@@ -6,12 +6,16 @@ import { JsonLogger } from './common/json-logger';
 import { SqliteGcsSyncService } from './services/sqlite-gcs-sync.service';
 
 async function bootstrap() {
+  // SQLite モードでは、NestFactory.create() で TypeORM が接続する前に
+  // GCS から既存 DB をダウンロードしておく。
+  // 接続後はローカルファイルが存在扱いになり、ダウンロードが
+  // スキップされてしまうため、この順序が必須。
+  if (SqliteGcsSyncService.resolveDbType() === 'sqlite') {
+    await new SqliteGcsSyncService().downloadDbFromGcs();
+  }
+
   const app = await NestFactory.create(AppModule);
   const sqliteGcsSyncService = app.get(SqliteGcsSyncService);
-
-  if (SqliteGcsSyncService.resolveDbType() === 'sqlite') {
-    await sqliteGcsSyncService.downloadDbFromGcs();
-  }
 
   // JSON 形式のログを使用（Cloud Logging 用）
   app.useLogger(new JsonLogger());
