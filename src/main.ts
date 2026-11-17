@@ -80,12 +80,14 @@ async function bootstrap() {
   const parsedPort = parseInt(process.env.PORT ?? '', 10);
   const port = Number.isNaN(parsedPort) ? 8888 : parsedPort;
 
-  const shutdown = async () => {
-    if (SqliteGcsSyncService.resolveDbType() === 'sqlite') {
-      await sqliteGcsSyncService.uploadDbToGcs();
-    }
-    await app.close();
-    process.exit(0);
+  const shutdown = () => {
+    void (async () => {
+      if (SqliteGcsSyncService.resolveDbType() === 'sqlite') {
+        await sqliteGcsSyncService.uploadDbToGcs();
+      }
+      await app.close();
+      process.exit(0);
+    })();
   };
 
   process.on('SIGTERM', shutdown);

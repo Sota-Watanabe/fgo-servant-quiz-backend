@@ -13,7 +13,7 @@ async function bootstrap() {
   const port = Number.isNaN(parsedPort) ? 8889 : parsedPort;
 
   await app.listen(port, '0.0.0.0');
-  
+
   const logger = new JsonLogger('BatchBootstrap');
   logger.log(`Batch application is running on port ${port}`);
 

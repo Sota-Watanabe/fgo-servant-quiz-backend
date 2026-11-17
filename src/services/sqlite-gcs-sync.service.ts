@@ -17,7 +17,8 @@ export class SqliteGcsSyncService {
   constructor() {
     this.bucketName = process.env.GCS_BUCKET_NAME || '';
     this.dbPath = process.env.SQLITE_PATH || '/tmp/fgo-servant-quiz.db';
-    this.objectName = process.env.SQLITE_GCS_OBJECT || 'sqlite/fgo-servant-quiz.db';
+    this.objectName =
+      process.env.SQLITE_GCS_OBJECT || 'sqlite/fgo-servant-quiz.db';
 
     this.storage =
       process.env.GCP_PROJECT_ID && this.bucketName
@@ -35,18 +36,24 @@ export class SqliteGcsSyncService {
   }
 
   isConfigured(): boolean {
-    return SqliteGcsSyncService.resolveDbType() === 'sqlite' && !!this.bucketName;
+    return (
+      SqliteGcsSyncService.resolveDbType() === 'sqlite' && !!this.bucketName
+    );
   }
 
   async downloadDbFromGcs(): Promise<boolean> {
     if (!this.isConfigured() || !this.storage) {
-      this.logger.debug('SQLite/GCS sync is disabled or GCS is not configured.');
+      this.logger.debug(
+        'SQLite/GCS sync is disabled or GCS is not configured.',
+      );
       return false;
     }
 
     const localExists = existsSync(this.dbPath);
     if (localExists) {
-      this.logger.log(`SQLite already exists at ${this.dbPath}. Skipping GCS download.`);
+      this.logger.log(
+        `SQLite already exists at ${this.dbPath}. Skipping GCS download.`,
+      );
       return false;
     }
 
@@ -56,14 +63,18 @@ export class SqliteGcsSyncService {
     try {
       const [exists] = await file.exists();
       if (!exists) {
-        this.logger.warn(`GCS object ${this.objectName} not found. Creating a fresh local SQLite DB.`);
+        this.logger.warn(
+          `GCS object ${this.objectName} not found. Creating a fresh local SQLite DB.`,
+        );
         await mkdir(dirname(this.dbPath), { recursive: true });
         return false;
       }
 
       await mkdir(dirname(this.dbPath), { recursive: true });
       await file.download({ destination: this.dbPath });
-      this.logger.log(`Downloaded SQLite DB from GCS object ${this.objectName} to ${this.dbPath}`);
+      this.logger.log(
+        `Downloaded SQLite DB from GCS object ${this.objectName} to ${this.dbPath}`,
+      );
       return true;
     } catch (error) {
       this.logger.warn(
@@ -82,7 +93,9 @@ export class SqliteGcsSyncService {
     try {
       await access(this.dbPath);
     } catch {
-      this.logger.warn(`SQLite DB file not found at ${this.dbPath}. Skipping upload.`);
+      this.logger.warn(
+        `SQLite DB file not found at ${this.dbPath}. Skipping upload.`,
+      );
       return false;
     }
 
