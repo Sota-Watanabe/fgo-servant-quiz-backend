@@ -20,6 +20,7 @@ import { DatabaseModule } from '@/database/database.module';
 import { RepositoriesModule } from '@/repositories/repositories.module';
 import { VertexAiApiService } from '@/services/vertex-ai-api.service';
 import { SqliteGcsSyncService } from '@/services/sqlite-gcs-sync.service';
+import { BasicServantSyncService } from '@/services/basic-servant-sync.service';
 import { OgpModule } from './ogp/ogp.module';
 
 @Module({
@@ -43,6 +44,7 @@ import { OgpModule } from './ogp/ogp.module';
     VertexAiGateway,
     VertexAiApiService,
     SqliteGcsSyncService,
+    BasicServantSyncService,
     // Interactors
     GetServantOptionsInteractor,
     GetQuizSkillInteractor,

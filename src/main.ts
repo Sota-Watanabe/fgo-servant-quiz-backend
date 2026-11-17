@@ -4,8 +4,13 @@ import { AppModule } from './app.module';
 import { Request, Response } from 'express';
 import { JsonLogger } from './common/json-logger';
 import { SqliteGcsSyncService } from './services/sqlite-gcs-sync.service';
+import { BasicServantSyncService } from './services/basic-servant-sync.service';
 
 async function bootstrap() {
+  // GCS に最新の basic_servant.json があれば、起動前にローカルへ反映する。
+  // 取得できない場合はイメージ同梱のファイルがそのまま使われる。
+  await new BasicServantSyncService().downloadToLocal();
+
   // SQLite モードでは、NestFactory.create() で TypeORM が接続する前に
   // GCS から既存 DB をダウンロードしておく。
   // 接続後はローカルファイルが存在扱いになり、ダウンロードが
