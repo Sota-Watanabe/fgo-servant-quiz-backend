@@ -116,9 +116,10 @@ jobs:
           docker run --rm -d --name test-container \
             -p 8888:8888 \
             -e PORT=8888 \
-            -e DB_HOST=172.17.0.1 \
+            -e DB_TYPE=mysql \
+            -e DB_HOST=host.docker.internal \
             -e DB_PORT=3306 \
-            -e DB_USERNAME=root \
+            -e DB_USER=root \
             -e DB_PASSWORD=test_password \
             -e DB_NAME=fgo_quiz_test \
             --add-host=host.docker.internal:host-gateway \
