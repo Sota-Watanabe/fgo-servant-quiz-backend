@@ -96,25 +96,37 @@ jobs:
           CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE: ${{ steps.auth.outputs.credentials_file_path }}
 
       # ------------------------------------
-      # 古いイメージのクリーンアップ（最新5つのみ保持）
+      # 古いイメージのクリーンアップ（最新5つ・latest・今回プッシュ分を保持）
       # ------------------------------------
       - name: Clean up old images
         run: |
-          echo "🗑️  古いイメージを削除中（最新5つとlatestタグを保持）..."
-          
-          # latest タグを除く古いイメージを削除（最新5つは保持）
-          IMAGES_TO_DELETE=$(gcloud artifacts docker images list \
-            ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }} \
+          echo "🗑️  古いイメージを削除中（最新5つ・latestタグ・今回プッシュしたイメージを保持）..."
+
+          IMAGE_URI="${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE_NAME }}"
+
+          # 削除対象のダイジェストを選定する
+          # - 作成日時の新しい順に並べ、最新5つは保持
+          # - latest タグが付いたイメージは保持
+          # - 今回プッシュしたイメージ（github.sha タグ）は保持
+          # 削除は必ずダイジェスト指定（@sha256:...）で行うこと。
+          # パッケージ名だけを指定すると、そのパッケージの全バージョンが削除されてしまう。
+          DIGESTS_TO_DELETE=$(gcloud artifacts docker images list "$IMAGE_URI" \
             --include-tags \
-            --format="get(IMAGE)" \
             --sort-by="~CREATE_TIME" \
-            --limit=999 | tail -n +6 | grep -v ":latest$" || true)
-          
-          if [ -n "$IMAGES_TO_DELETE" ]; then
-            echo "$IMAGES_TO_DELETE" | while read -r image; do
-              if [ -n "$image" ]; then
-                echo "削除: $image"
-                gcloud artifacts docker images delete "$image" --quiet || true
+            --limit=999 \
+            --format=json \
+            | jq -r --arg sha "${{ github.sha }}" '
+                sort_by(.createTime) | reverse | .[5:][]
+                | select(((.tags // []) | index("latest") | not))
+                | select(((.tags // []) | index($sha) | not))
+                | .version
+              ')
+
+          if [ -n "$DIGESTS_TO_DELETE" ]; then
+            echo "$DIGESTS_TO_DELETE" | while read -r digest; do
+              if [ -n "$digest" ]; then
+                echo "削除: $IMAGE_URI@$digest"
+                gcloud artifacts docker images delete "$IMAGE_URI@$digest" --delete-tags --quiet || true
               fi
             done
             echo "✅ クリーンアップ完了"
