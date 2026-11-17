@@ -8,6 +8,21 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
+        const dbType = (configService.get<string>('DB_TYPE', 'mysql') || 'mysql')
+          .trim()
+          .toLowerCase();
+
+        if (dbType === 'sqlite') {
+          return {
+            type: 'better-sqlite3' as const,
+            database: configService.get<string>('SQLITE_PATH', '/tmp/fgo-servant-quiz.db'),
+            autoLoadEntities: true,
+            synchronize: configService.get<string>('NODE_ENV') !== 'production',
+            logging: configService.get<string>('DB_LOGGING', 'false') === 'true',
+            timezone: configService.get<string>('DB_TIMEZONE', 'Z'),
+          };
+        }
+
         const loggingRaw = configService.get<string>('DB_LOGGING', 'false');
         const host = configService.get<string>('DB_HOST', '127.0.0.1');
         const socketPath =

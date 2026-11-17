@@ -3,9 +3,15 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { Request, Response } from 'express';
 import { JsonLogger } from './common/json-logger';
+import { SqliteGcsSyncService } from './services/sqlite-gcs-sync.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const sqliteGcsSyncService = app.get(SqliteGcsSyncService);
+
+  if (SqliteGcsSyncService.resolveDbType() === 'sqlite') {
+    await sqliteGcsSyncService.downloadDbFromGcs();
+  }
 
   // JSON 形式のログを使用（Cloud Logging 用）
   app.useLogger(new JsonLogger());
@@ -73,9 +79,21 @@ async function bootstrap() {
   // Cloud RunのPORT環境変数を数値として解釈し、無効値はデフォルトの8888を使用
   const parsedPort = parseInt(process.env.PORT ?? '', 10);
   const port = Number.isNaN(parsedPort) ? 8888 : parsedPort;
+
+  const shutdown = async () => {
+    if (SqliteGcsSyncService.resolveDbType() === 'sqlite') {
+      await sqliteGcsSyncService.uploadDbToGcs();
+    }
+    await app.close();
+    process.exit(0);
+  };
+
+  process.on('SIGTERM', shutdown);
+  process.on('SIGINT', shutdown);
+
   // Cloud Run用に0.0.0.0でリッスン
   await app.listen(port, '0.0.0.0');
-  
+
   const logger = new JsonLogger('Bootstrap');
   logger.log(`Application is running on port ${port}`);
   logger.log(`Swagger UI is available at http://localhost:${port}/api`);

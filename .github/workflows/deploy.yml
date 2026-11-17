@@ -125,41 +125,11 @@ jobs:
           CLOUDSDK_AUTH_CREDENTIAL_FILE_OVERRIDE: ${{ steps.auth.outputs.credentials_file_path }}
 
       # ------------------------------------
-      # TypeORM マイグレーション実行
+      # SQLite / GCS ベースの起動前準備
       # ------------------------------------
-      - name: Run database migrations
-        env:
-          DB_HOST: 127.0.0.1
-          DB_PORT: 3306
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          DB_NAME: ${{ secrets.DB_NAME }}
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file_path }}
+      - name: Install dependencies
         run: |
-          set -euo pipefail
-          wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy
-          chmod +x cloud_sql_proxy
-          ./cloud_sql_proxy -instances=${{ secrets.CLOUD_SQL_INSTANCE }}=tcp:3306 &
-          PROXY_PID=$!
-          trap 'kill "$PROXY_PID"' EXIT
-
-          for attempt in {1..10}; do
-            if bash -c "echo > /dev/tcp/127.0.0.1/3306" >/dev/null 2>&1; then
-              echo "Cloud SQL Proxy is ready."
-              break
-            fi
-
-            if [ "${attempt}" -eq 10 ]; then
-              echo "Cloud SQL Proxy failed to start within expected time." >&2
-              exit 1
-            fi
-
-            echo "Waiting for Cloud SQL Proxy (attempt ${attempt})..."
-            sleep 2
-          done
-
           npm ci
-          npm run migrate:run
 
       # ------------------------------------
       # Cloud Run デプロイ
@@ -172,19 +142,15 @@ jobs:
             --region ${{ env.REGION }} \
             --service-account ${{ secrets.GCP_SERVICE_ACCOUNT }} \
             --allow-unauthenticated \
-            --add-cloudsql-instances "${{ secrets.CLOUD_SQL_INSTANCE }}" \
             --port 8080 \
             --set-env-vars "VERTEX_AI_PROJECT_ID=${{ env.PROJECT_ID }}" \
             --set-env-vars "VERTEX_AI_LOCATION=${{ env.REGION }}" \
             --set-env-vars "VERTEX_AI_MODEL=gemini-2.5-flash" \
             --set-env-vars "FRONTEND_URL=${{ secrets.FRONTEND_URL }}" \
             --set-env-vars "NODE_ENV=production" \
-            --set-env-vars "DB_SOCKET_PATH=/cloudsql/${{ secrets.CLOUD_SQL_INSTANCE }}" \
-            --set-env-vars "DB_HOST=localhost" \
-            --set-env-vars "DB_PORT=3306" \
-            --set-env-vars "DB_USER=${{ secrets.DB_USER }}" \
-            --set-env-vars "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" \
-            --set-env-vars "DB_NAME=${{ secrets.DB_NAME }}" \
+            --set-env-vars "DB_TYPE=sqlite" \
+            --set-env-vars "SQLITE_PATH=/tmp/fgo-servant-quiz.db" \
+            --set-env-vars "SQLITE_GCS_OBJECT=sqlite/fgo-servant-quiz.db" \
             --set-env-vars "GCS_BUCKET_NAME=${{ secrets.GCS_BUCKET_NAME }}" \
             --set-env-vars "CLOUD_TASKS_LOCATION=${{ env.REGION }}" \
             --set-env-vars "CLOUD_TASKS_QUEUE_NAME=${{ secrets.CLOUD_TASKS_QUEUE_NAME }}" \

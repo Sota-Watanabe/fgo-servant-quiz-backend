@@ -136,7 +136,7 @@ export class QuizCardService implements OnModuleDestroy {
         height: DEFAULT_VIEWPORT_HEIGHT,
         deviceScaleFactor: 1,
       });
-      await page.setContent(html, { waitUntil: 'networkidle0' });
+      await page.setContent(html, { waitUntil: 'load' });
       const screenshot = (await page.screenshot({
         type: 'png',
         fullPage: true,

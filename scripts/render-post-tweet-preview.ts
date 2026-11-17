@@ -130,7 +130,7 @@ async function main(): Promise<void> {
   try {
     const page = await browser.newPage();
     await page.setViewport({ width: 900, height: 900, deviceScaleFactor: 2 });
-    await page.setContent(html, { waitUntil: 'networkidle0' });
+    await page.setContent(html, { waitUntil: 'load' });
     await page.screenshot({ path: imagePath, type: 'png', fullPage: true });
   } finally {
     await browser.close();

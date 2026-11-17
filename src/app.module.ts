@@ -19,6 +19,7 @@ import { GetQuizNpVoiceInteractor } from '@/interactors/get-quiz-np-voice.intera
 import { DatabaseModule } from '@/database/database.module';
 import { RepositoriesModule } from '@/repositories/repositories.module';
 import { VertexAiApiService } from '@/services/vertex-ai-api.service';
+import { SqliteGcsSyncService } from '@/services/sqlite-gcs-sync.service';
 import { OgpModule } from './ogp/ogp.module';
 
 @Module({
@@ -41,6 +42,7 @@ import { OgpModule } from './ogp/ogp.module';
     AtlasAcademyGateway,
     VertexAiGateway,
     VertexAiApiService,
+    SqliteGcsSyncService,
     // Interactors
     GetServantOptionsInteractor,
     GetQuizSkillInteractor,
