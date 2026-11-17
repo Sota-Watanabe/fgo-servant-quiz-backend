@@ -1,7 +1,7 @@
 # ================================
 # Stage 1: Build
 # ================================
-FROM node:26-alpine AS builder
+FROM node:26-bookworm-slim AS builder
 WORKDIR /app
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -18,7 +18,7 @@ RUN npm run build
 # ================================
 # Stage 2: Production
 # ================================
-FROM node:26-alpine AS production
+FROM node:26-bookworm-slim AS production
 WORKDIR /app
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
