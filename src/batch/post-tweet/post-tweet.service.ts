@@ -84,7 +84,7 @@ export class PostTweetService {
       throw new Error('Servant ID is missing in quiz payload.');
     }
 
-    const baseUrl = 'https://fate-grand-quiz.com';
+    const baseUrl = 'https://fgo-servant-quiz.so-ta.net';
     const path = this.getAnswerPath(endpoint);
     const url = new URL(path, baseUrl);
     url.searchParams.set('servantId', servantId);
